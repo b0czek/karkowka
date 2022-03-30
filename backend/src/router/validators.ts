@@ -18,6 +18,17 @@ const string: ParamSchema = {
     notEmpty: true,
 };
 
+const stringLength4To32: ParamSchema = {
+    ...string,
+    isLength: {
+        bail: true,
+        options: {
+            max: 32,
+            min: 4,
+        },
+    },
+};
+
 const password: ParamSchema = {
     ...string,
     isLength: {
@@ -31,6 +42,7 @@ const password: ParamSchema = {
 export default {
     uuid,
     string,
+    stringLength4To32,
     password,
 };
 

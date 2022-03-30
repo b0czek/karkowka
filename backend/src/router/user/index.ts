@@ -1,23 +1,22 @@
-import { checkSchema, ParamSchema, Schema } from "express-validator";
+import express, { Request, Response } from "express";
+import { checkSchema, Schema } from "express-validator";
+import bcrypt from "bcrypt";
+import crypto from "crypto";
+
 import { User } from "../../entities/User";
 import { Database } from "../../database";
 import validators, { rejectIfBadRequest } from "../validators";
-import express, { Request, Response } from "express";
-import bcrypt from "bcrypt";
 import { AppRouter } from "..";
-import crypto from "crypto";
-const HASHING_ROUNDS = 9;
+import { Config } from "../../config";
 
 export const userRouterCreate = () => {
     const router = express.Router();
     //create user
     router.post("/", checkSchema(userRegistrationSchema), rejectIfBadRequest, async (req: Request, res: Response) => {
         let params: UserRegistrationBody = req.body;
-        console.log("dupa");
-        let passwordHash = await bcrypt.hash(params.password, HASHING_ROUNDS);
+        let passwordHash = await bcrypt.hash(params.password, Config.Session.hashingRounds);
 
         let user = Database.orm.em.create(User, {
-            user_uuid: crypto.randomUUID(),
             name: params.name,
             username: params.username,
             password_hash: passwordHash,
@@ -36,20 +35,9 @@ export const userRouterCreate = () => {
     return router;
 };
 
-const stringLength4To32: ParamSchema = {
-    ...validators.string,
-    isLength: {
-        bail: true,
-        options: {
-            max: 32,
-            min: 4,
-        },
-    },
-};
-
 export const userRegistrationSchema: Schema = {
     username: {
-        ...stringLength4To32,
+        ...validators.stringLength4To32,
         custom: {
             bail: true,
             errorMessage: "user with such username already exists",
@@ -64,7 +52,7 @@ export const userRegistrationSchema: Schema = {
         },
     },
     password: validators.password,
-    name: stringLength4To32,
+    name: validators.stringLength4To32,
 };
 
 interface UserRegistrationBody {
