@@ -6,7 +6,6 @@ import { Database } from "../../database";
 import { User } from "../../entities/User";
 import { AppRouter } from "..";
 import { ExpressSession } from "../expressSession";
-import e from "express";
 
 export const sessionRouterCreate = () => {
     const router = express.Router();
@@ -29,7 +28,7 @@ export const sessionRouterCreate = () => {
 
         if (passwordMatches) {
             req.session.loggedIn = true;
-            req.session.user_uuid = user.uuid;
+            req.session.user_uuid = user.uuid!;
         } else {
             return AppRouter.badRequest(res, "invalid password");
         }

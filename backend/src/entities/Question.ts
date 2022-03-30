@@ -1,8 +1,9 @@
-import { Entity, Property, PrimaryKey, ManyToOne, ArrayType, ManyToMany, Collection } from "@mikro-orm/core";
+import { Entity, Property, PrimaryKey, ManyToOne, ArrayType, ManyToMany, Collection, OneToMany, Cascade } from "@mikro-orm/core";
 import crypto from "crypto";
 import { User } from "./User";
 import { QuestionList } from "./QuestionList";
 import { Exam } from "./Exam";
+import { ExamAnswer } from "./ExamAnswer";
 
 @Entity()
 export class Question {
@@ -10,7 +11,7 @@ export class Question {
     uuid: string = crypto.randomUUID();
 
     @Property({ type: ArrayType, nullable: false })
-    answer: string[];
+    answers: string[];
 
     @Property({ type: "string" })
     question: string;
@@ -20,4 +21,7 @@ export class Question {
 
     @ManyToMany(() => Exam, (exam) => exam.utilized_questions)
     utilized_in = new Collection<Exam>(this);
+
+    @OneToMany(() => ExamAnswer, (answer) => answer.question, { cascade: [Cascade.ALL] })
+    user_answers = new Collection<ExamAnswer>(this);
 }
