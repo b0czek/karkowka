@@ -1,8 +1,5 @@
 import express, { Request, Response } from "express";
 import { ExpressSession } from "../../expressSession";
-import { checkSchema, Schema } from "express-validator";
-import validators, { rejectIfBadRequest } from "../../validators";
-import { Question, questionArraySchema } from "..";
 import { Database } from "../../../database";
 import { QuestionList } from "../../../entities/QuestionList";
 import { AppRouter } from "../..";
@@ -15,9 +12,7 @@ export const questionListsRouterCreate = () => {
             let question_lists = await Database.orm.em.find(
                 QuestionList,
                 {
-                    owned_by: {
-                        uuid: req.session.user_uuid!,
-                    },
+                    owned_by: req.session.user_uuid,
                 },
                 { populate: ["questions"] }
             );

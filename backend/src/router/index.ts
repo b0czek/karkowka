@@ -20,6 +20,8 @@ export class AppRouter {
 
     public static unauthorized = (res: Response, message = "unauthorized") => this.error(401, res, message);
 
+    public static notFound = (res: Response, message = "not found") => this.error(404, res, message);
+
     public static create = async () => {
         const router = express.Router();
 
