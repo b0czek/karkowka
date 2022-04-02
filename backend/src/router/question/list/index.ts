@@ -5,10 +5,23 @@ import validators, { rejectIfBadRequest } from "../../validators";
 import { Database } from "../../../database";
 import { QuestionList } from "../../../entities/QuestionList";
 import { AppRouter } from "../..";
-import { questionArraySchema, QuestionBody } from "../questionSchema";
+import { questionArraySchema, QuestionBody, questionObjectCreate } from "../questionSchema";
+import { questionListsRouterCreate } from "./lists";
+import { questionListUuidSchema } from "..";
+
+export const questionListObjectCreate = (questionList: QuestionList) => {
+    return {
+        uuid: questionList.uuid,
+        created_at: questionList.created_at,
+        name: questionList.name,
+        questions: questionList.questions.getItems().map(questionObjectCreate),
+    };
+};
 
 export const questionListRouterCreate = () => {
     const router = express.Router();
+
+    router.use("/lists", questionListsRouterCreate());
 
     router.get(
         "/",
@@ -18,17 +31,23 @@ export const questionListRouterCreate = () => {
         async (req: Request, res: Response) => {
             let body: QuestionListGetBody = req.body;
             try {
-                let question_list = await Database.orm.em.findOne(QuestionList, {
-                    owned_by: req.session.user_uuid,
-                    uuid: body.question_list_uuid,
-                });
+                let question_list = await Database.orm.em.findOne(
+                    QuestionList,
+                    {
+                        owned_by: req.session.user_uuid,
+                        uuid: body.question_list_uuid,
+                    },
+                    {
+                        fields: ["created_at", "name", "questions.question", "questions.answers", "questions.uuid", "uuid"],
+                    }
+                );
                 if (!question_list) {
                     return AppRouter.notFound(res);
                 }
 
                 return res.json({
                     error: false,
-                    question_list,
+                    question_list: questionListObjectCreate(question_list),
                 });
             } catch (err) {
                 return AppRouter.internalServerError(res, "could not fetch database");
@@ -99,7 +118,7 @@ export const questionListRouterCreate = () => {
 };
 
 const questionListGetSchema: Schema = {
-    question_list_uuid: validators.uuid,
+    ...questionListUuidSchema,
 };
 
 interface QuestionListGetBody {
@@ -118,7 +137,7 @@ interface QuestionListCreateBody {
 }
 
 const questionListDeleteSchema: Schema = {
-    question_list_uuid: validators.uuid,
+    ...questionListUuidSchema,
 };
 interface QuestionListDeleteBody {
     question_list_uuid: string;

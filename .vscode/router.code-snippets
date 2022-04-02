@@ -1,0 +1,16 @@
+{
+	"Create express router": {
+		"scope": "typescript",
+		"prefix": "exrouter",
+		"body": [
+			"import express, { Request, Response } from \"express\";",
+			"",
+			"export const ${1:name}RouterCreate = () => {",
+			"    const router = express.Router();",
+			"",
+			"    return router",
+			"",
+			"}"
+		]
+	}
+}

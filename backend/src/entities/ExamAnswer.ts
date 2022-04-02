@@ -11,7 +11,7 @@ export class ExamAnswer {
     uuid: string = crypto.randomUUID();
 
     @Property({ type: Date })
-    anwsered_at = new Date();
+    anwsered_at?: Date = new Date();
 
     @Property({ type: "string" })
     anwser: string;

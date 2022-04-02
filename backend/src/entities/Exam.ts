@@ -19,9 +19,13 @@ export class Exam {
     @Property({ type: Date })
     created_at?: Date = new Date();
 
-    // date at which the exam should be open for answers
+    // date at which the exam should be open for joining
     @Property({ type: Date })
     started_at: Date = new Date();
+
+    // seconds to join the started exam
+    @Property({ type: "number" })
+    time_to_join: number;
 
     // time in seconds that the exam should last for
     @Property({ type: "number" })

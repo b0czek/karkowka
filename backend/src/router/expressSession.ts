@@ -7,6 +7,8 @@ const RedisStore = connectRedis(session);
 
 import express, { Request, Response, NextFunction } from "express";
 import { AppRouter } from ".";
+import { Database } from "../database";
+import { User } from "../entities/User";
 
 export type RedisClient = ReturnType<typeof createClient>;
 
@@ -48,11 +50,19 @@ export class ExpressSession {
         });
     }
 
-    public static verifyLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+    public static verifyLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
         if (req.session.loggedIn === true && req.session.user_uuid && uuidv4Regex.test(req.session.user_uuid)) {
-            return next();
+            try {
+                await Database.orm.em.findOneOrFail(User, {
+                    uuid: req.session.user_uuid,
+                });
+                return next();
+            } catch (err) {
+                req.session.destroy((e) => e);
+                return AppRouter.unauthorized(res);
+            }
+        } else {
+            return AppRouter.unauthorized(res);
         }
-
-        return AppRouter.unauthorized(res);
     };
 }

@@ -3,6 +3,7 @@ import { ExpressSession } from "../../expressSession";
 import { Database } from "../../../database";
 import { QuestionList } from "../../../entities/QuestionList";
 import { AppRouter } from "../..";
+import { questionListObjectCreate } from ".";
 
 export const questionListsRouterCreate = () => {
     const router = express.Router();
@@ -14,11 +15,11 @@ export const questionListsRouterCreate = () => {
                 {
                     owned_by: req.session.user_uuid,
                 },
-                { populate: ["questions"] }
+                { populate: ["questions.answers", "questions.uuid", "questions.question"] }
             );
             return res.json({
                 error: false,
-                question_lists,
+                question_lists: question_lists.map(questionListObjectCreate),
             });
         } catch (err) {
             return AppRouter.internalServerError(res, "could not fetch question lists");

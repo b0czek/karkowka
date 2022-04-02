@@ -2,14 +2,15 @@ import { Entity, Property, PrimaryKey, Cascade, Collection, ManyToOne, ManyToMan
 import crypto from "crypto";
 import { ExamAnswer } from "./ExamAnswer";
 import { Exam } from "./Exam";
-import { Question } from "./Question";
-import { QuestionList } from "./QuestionList";
 import { User } from "./User";
 
 @Entity()
 export class ExamParticipation {
     @PrimaryKey({ type: "string" })
     uuid: string = crypto.randomUUID();
+
+    @Property({ type: Date })
+    joined_at?: Date = new Date();
 
     @ManyToOne(() => User)
     participant: User;

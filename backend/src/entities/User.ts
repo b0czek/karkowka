@@ -28,6 +28,7 @@ export class User {
     @OneToMany(() => Exam, (exam) => exam.hosted_by, { cascade: [Cascade.ALL] })
     hosted_exams = new Collection<QuestionList>(this);
 
+    // exams the user was invited to
     @ManyToMany(() => Exam, (exam) => exam.participants)
     participated_exams = new Collection<Exam>(this);
 

@@ -1,10 +1,10 @@
-import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import express, { Response } from "express";
 import cors from "cors";
 import { userRouterCreate } from "./user";
 import { ExpressSession } from "./expressSession";
 import { sessionRouterCreate } from "./session";
 import { questionRouterCreate } from "./question";
+import { examRouterCreate } from "./exam";
 
 export class AppRouter {
     public static error = (code: number, res: Response, message: string, additionalFields?: { [key: string]: any }) =>
@@ -22,6 +22,8 @@ export class AppRouter {
 
     public static notFound = (res: Response, message = "not found") => this.error(404, res, message);
 
+    public static forbidden = (res: Response, message = "forbidden") => this.error(403, res, message);
+
     public static create = async () => {
         const router = express.Router();
 
@@ -33,6 +35,7 @@ export class AppRouter {
         router.use("/user", userRouterCreate());
         router.use("/session", sessionRouterCreate());
         router.use("/question", questionRouterCreate());
+        router.use("/exam", examRouterCreate());
 
         router.get("/", (_, res) => res.json({ ok: true }));
 

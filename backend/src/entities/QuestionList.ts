@@ -2,6 +2,7 @@ import { Entity, Property, PrimaryKey, OneToMany, ManyToOne, Cascade, Collection
 import crypto from "crypto";
 import { User } from "./User";
 import { Question } from "./Question";
+import { Exam } from "./Exam";
 
 @Entity()
 export class QuestionList {
@@ -19,4 +20,7 @@ export class QuestionList {
 
     @OneToMany(() => Question, (question) => question.belongs_to, { cascade: [Cascade.ALL] })
     questions = new Collection<Question>(this);
+
+    @OneToMany(() => Exam, (exam) => exam.question_list, { cascade: [Cascade.ALL] })
+    utilized_in = new Collection<Exam>(this);
 }
