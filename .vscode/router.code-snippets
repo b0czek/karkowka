@@ -12,5 +12,12 @@
 			"",
 			"}"
 		]
+	},
+	"Create express endpoint": {
+		"scope": "typescript",
+		"prefix": "exendpoint",
+		"body": [
+			"router.${1:method}(\"/${2:path}\", ExpressSession.verifyLoggedIn,checkSchema(${3:schemaName}),rejectIfBadRequest, async(req: Request, res:Response) => {$4});"
+		]
 	}
 }
