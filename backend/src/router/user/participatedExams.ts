@@ -6,7 +6,7 @@ import { Exam } from "../../entities/Exam";
 import { AppRouter } from "..";
 import { ExpressSession } from "../expressSession";
 
-const userParticipatedExamsObjectCreate = (exam: Exam, exam_participations: ExamParticipation[] | undefined) => {
+const userParticipatedExamObjectCreate = (exam: Exam, exam_participations: ExamParticipation[] | undefined) => {
     let participation = exam_participations
         ? exam_participations.find((participation) => participation.exam.uuid === exam.uuid)
         : undefined;
@@ -37,9 +37,9 @@ export const userParticipatedExamsRouterCreate = () => {
             }
             return res.json({
                 error: false,
-                exams_uuids: user.participated_exams
+                exams: user.participated_exams
                     .getItems()
-                    .map((exam) => userParticipatedExamsObjectCreate(exam, user?.exam_participations.getItems())),
+                    .map((exam) => userParticipatedExamObjectCreate(exam, user?.exam_participations.getItems())),
             });
         } catch (err) {
             console.log(err);

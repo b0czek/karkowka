@@ -137,6 +137,11 @@ export const userRegistrationSchema: Schema = {
         ...validators.existsInDb(User, "username", true, {
             deleted: false,
         }),
+        custom: {
+            bail: true,
+            errorMessage: "field must not contain any spaces - ",
+            options: (username: string) => !username.includes(" "),
+        },
     },
     password: validators.password,
     name: validators.stringLength4To32,

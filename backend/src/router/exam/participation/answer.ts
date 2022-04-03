@@ -13,8 +13,8 @@ const examAnswerObjectCreate = (answer: ExamAnswer) => {
     return {
         answered_at: answer.anwsered_at,
         answer: answer.anwser,
-        is_corrent: answer.is_correct,
-        question_uuid: questionObjectCreate(answer.question),
+        is_correct: answer.is_correct,
+        question: questionObjectCreate(answer.question),
     };
 };
 
@@ -155,7 +155,7 @@ export const examAnswerRouterCreate = () => {
 
             return res.status(201).json({
                 error: false,
-                is_corrent: answerCorrect,
+                is_correct: answerCorrect,
                 answer_uuid: answer.uuid,
             });
         }

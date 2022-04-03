@@ -19,6 +19,12 @@ const string: ParamSchema = {
         bail: true,
     },
     notEmpty: true,
+    isLength: {
+        bail: true,
+        options: {
+            max: 256,
+        },
+    },
 };
 
 const stringLength4To32: ParamSchema = {
