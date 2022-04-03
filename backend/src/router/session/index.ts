@@ -10,6 +10,13 @@ import { ExpressSession } from "../expressSession";
 export const sessionRouterCreate = () => {
     const router = express.Router();
 
+    router.get("/", ExpressSession.verifyLoggedIn, async (req: Request, res: Response) => {
+        return res.json({
+            error: false,
+            logged_in_as: req.session.user_uuid,
+        });
+    });
+
     router.post("/", checkSchema(userLoginSchema), rejectIfBadRequest, async (req: Request, res: Response) => {
         let body: UserLoginBody = req.body;
 
@@ -19,6 +26,7 @@ export const sessionRouterCreate = () => {
 
         let user = await Database.orm.em.findOne(User, {
             username: body.username,
+            deleted: false,
         });
         if (!user) {
             return AppRouter.badRequest(res, "invalid username");

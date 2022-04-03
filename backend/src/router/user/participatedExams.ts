@@ -1,8 +1,21 @@
 import express, { Request, Response } from "express";
 import { Database } from "../../database";
 import { User } from "../../entities/User";
+import { ExamParticipation } from "../../entities/ExamParticipation";
+import { Exam } from "../../entities/Exam";
 import { AppRouter } from "..";
 import { ExpressSession } from "../expressSession";
+
+const userParticipatedExamsObjectCreate = (exam: Exam, exam_participations: ExamParticipation[] | undefined) => {
+    let participation = exam_participations
+        ? exam_participations.find((participation) => participation.exam.uuid === exam.uuid)
+        : undefined;
+    return {
+        uuid: exam.uuid,
+        joined: participation !== undefined,
+        participation_uuid: participation?.uuid ?? null,
+    };
+};
 
 export const userParticipatedExamsRouterCreate = () => {
     const router = express.Router();
@@ -13,9 +26,10 @@ export const userParticipatedExamsRouterCreate = () => {
                 User,
                 {
                     uuid: req.session.user_uuid,
+                    deleted: false,
                 },
                 {
-                    fields: ["participated_exams.uuid", "exam_participations.exam.uuid"],
+                    fields: ["participated_exams.uuid", "exam_participations.exam"],
                 }
             );
             if (!user) {
@@ -23,14 +37,12 @@ export const userParticipatedExamsRouterCreate = () => {
             }
             return res.json({
                 error: false,
-                exams_uuids: user.participated_exams.getItems().map((exam) => {
-                    return {
-                        uuid: exam.uuid,
-                        joined: user!.exam_participations.getItems().some((participation) => participation.uuid === exam.uuid),
-                    };
-                }),
+                exams_uuids: user.participated_exams
+                    .getItems()
+                    .map((exam) => userParticipatedExamsObjectCreate(exam, user?.exam_participations.getItems())),
             });
         } catch (err) {
+            console.log(err);
             return AppRouter.internalServerError(res);
         }
     });

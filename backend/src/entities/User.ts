@@ -16,7 +16,7 @@ export class User {
     @Property({ type: "string" })
     password_hash: string;
 
-    @Property({ type: "string", unique: true })
+    @Property({ type: "string" })
     username: string;
 
     @Property({ type: "string" })
@@ -32,6 +32,9 @@ export class User {
     @ManyToMany(() => Exam, (exam) => exam.participants)
     participated_exams = new Collection<Exam>(this);
 
-    @OneToMany(() => ExamParticipation, (participations) => participations.participant, { cascade: [Cascade.ALL] })
+    @OneToMany(() => ExamParticipation, (participations) => participations.participant)
     exam_participations = new Collection<ExamParticipation>(this);
+
+    @Property({ type: "boolean" })
+    deleted?: boolean = false;
 }

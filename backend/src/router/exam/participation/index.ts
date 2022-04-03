@@ -46,7 +46,7 @@ export const examParticipationRouterCreate = () => {
                         uuid: body.participation_uuid,
                     },
                     {
-                        fields: ["uuid", "joined_at", "answers.uuid", "answers.is_correct", "exam.uuid"],
+                        fields: ["uuid", "joined_at", "answers.uuid", "answers.is_correct", "exam"],
                     }
                 );
                 if (!participation) {
@@ -57,6 +57,7 @@ export const examParticipationRouterCreate = () => {
                     exam_participation: examParticipationObjectCreate(participation),
                 });
             } catch (err) {
+                console.log(err);
                 return AppRouter.internalServerError(res);
             }
         }

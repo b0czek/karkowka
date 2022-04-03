@@ -15,6 +15,7 @@ export const questionListObjectCreate = (questionList: QuestionList) => {
         created_at: questionList.created_at,
         name: questionList.name,
         questions: questionList.questions.getItems().map(questionObjectCreate),
+        deleted: questionList.deleted,
     };
 };
 
@@ -34,11 +35,19 @@ export const questionListRouterCreate = () => {
                 let question_list = await Database.orm.em.findOne(
                     QuestionList,
                     {
-                        owned_by: req.session.user_uuid,
                         uuid: body.question_list_uuid,
+                        owned_by: req.session.user_uuid,
                     },
                     {
-                        fields: ["created_at", "name", "questions.question", "questions.answers", "questions.uuid", "uuid"],
+                        fields: [
+                            "created_at",
+                            "name",
+                            "questions.question",
+                            "questions.answers",
+                            "questions.uuid",
+                            "questions.deleted",
+                            "uuid",
+                        ],
                     }
                 );
                 if (!question_list) {
@@ -92,25 +101,44 @@ export const questionListRouterCreate = () => {
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
             let body: QuestionListDeleteBody = req.body;
+            let questionList: QuestionList;
             try {
-                let list = await Database.orm.em.findOne(QuestionList, {
-                    uuid: body.question_list_uuid,
-                    owned_by: req.session.user_uuid,
-                });
+                let list = await Database.orm.em.findOne(
+                    QuestionList,
+                    {
+                        uuid: body.question_list_uuid,
+                        owned_by: req.session.user_uuid,
+                        deleted: false,
+                    },
+                    {
+                        fields: ["utilized_in.uuid"],
+                    }
+                );
                 if (!list) {
                     return AppRouter.notFound(res);
                 }
 
-                await Database.orm.em.removeAndFlush(list);
-
-                return res.json({
-                    error: false,
-                });
-
-                // await Database.orm.em.nativeDelete(QuestionList, {});
+                questionList = list;
             } catch (err) {
                 return AppRouter.internalServerError(res);
             }
+            if (questionList.utilized_in.count() > 0) {
+                Database.orm.em.assign(questionList, {
+                    deleted: true,
+                });
+            } else {
+                Database.orm.em.remove(questionList);
+            }
+
+            try {
+                await Database.orm.em.flush();
+            } catch (err) {
+                return AppRouter.internalServerError(res, "could not remove question list");
+            }
+
+            return res.json({
+                error: false,
+            });
         }
     );
 

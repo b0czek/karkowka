@@ -44,11 +44,11 @@ export class Exam {
     question_list: QuestionList;
 
     // sublist of question_list including questions_count number of questions
-    @ManyToMany(() => Question, (question) => question.utilized_in, { owner: true, cascade: [Cascade.ALL] })
+    @ManyToMany(() => Question, (question) => question.utilized_in, { owner: true })
     utilized_questions = new Collection<Question>(this);
 
     // invited users
-    @ManyToMany(() => User, (user) => user.participated_exams, { owner: true, cascade: [Cascade.ALL] })
+    @ManyToMany(() => User, (user) => user.participated_exams, { owner: true })
     participants = new Collection<User>(this);
 
     // acts of participation

@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, urlencoded } from "express";
 import { checkSchema, Schema } from "express-validator";
 import bcrypt from "bcrypt";
 
@@ -17,6 +17,7 @@ export const userObjectCreate = (user: User) => {
         created_at: user.created_at,
         username: user.username,
         name: user.name,
+        deleted: user.deleted,
     };
 };
 
@@ -37,7 +38,6 @@ export const userRouterCreate = () => {
                 let user = await Database.orm.em.findOne(User, {
                     uuid: body.user_uuid ?? req.session.user_uuid,
                 });
-                Database.orm.em.findOne(User, {});
                 if (!user) {
                     return AppRouter.notFound(res);
                 }
@@ -73,20 +73,50 @@ export const userRouterCreate = () => {
         });
     });
 
-    // router.delete("/", ExpressSession.verifyLoggedIn, async (req: Request, res: Response) => {
-    //     try {
-    //         await Database.orm.em.nativeDelete(User, {
-    //             uuid: req.session.user_uuid!,
-    //         });
-    //     } catch (err) {
-    //         console.error(err);
-    //         return AppRouter.internalServerError(res);
-    //     }
+    router.delete("/", ExpressSession.verifyLoggedIn, async (req: Request, res: Response) => {
+        let user: User;
+        try {
+            let u = await Database.orm.em.findOne(
+                User,
+                {
+                    uuid: req.session.user_uuid,
+                    deleted: false,
+                },
+                {
+                    fields: ["participated_exams"],
+                }
+            );
+            if (!u) {
+                return AppRouter.notFound(res);
+            }
+            user = u;
+        } catch (err) {
+            return AppRouter.internalServerError(res);
+        }
+        // if user has participated in any exams and any of them is not their examy
+        if (
+            user.participated_exams.count() > 0 &&
+            user.participated_exams.getItems().some((exam) => exam.hosted_by.uuid !== user.uuid)
+        ) {
+            Database.orm.em.assign(user, {
+                deleted: true,
+            });
+        } else {
+            Database.orm.em.remove(user);
+        }
 
-    //     return res.json({
-    //         error: false,
-    //     });
-    // });
+        try {
+            await Database.orm.em.flush();
+        } catch (err) {
+            return AppRouter.internalServerError(res);
+        }
+
+        req.session.destroy((_) => _);
+
+        return res.json({
+            error: false,
+        });
+    });
     return router;
 };
 
@@ -104,7 +134,9 @@ interface UserGetBody {
 export const userRegistrationSchema: Schema = {
     username: {
         ...validators.stringLength4To32,
-        ...validators.existsInDb(User, "username", true),
+        ...validators.existsInDb(User, "username", true, {
+            deleted: false,
+        }),
     },
     password: validators.password,
     name: validators.stringLength4To32,

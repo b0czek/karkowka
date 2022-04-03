@@ -3,10 +3,10 @@ import { Question } from "../../entities/Question";
 import validators from "../validators";
 
 export const questionObjectCreate = (question: Question) => {
-    return { uuid: question.uuid, answers: question.answers, question: question.question };
+    return { uuid: question.uuid, answers: question.answers, question: question.question, deleted: question.deleted };
 };
 
-export const questionParamSchema: ParamSchema = {
+export const questionAnswerParamSchema: ParamSchema = {
     isArray: {
         bail: true,
     },
@@ -30,7 +30,7 @@ export const questionArraySchema: Schema = {
         },
     },
     "questions.*.question": validators.string,
-    "questions.*.answers": questionParamSchema,
+    "questions.*.answers": questionAnswerParamSchema,
 };
 export interface QuestionBody {
     question: string;

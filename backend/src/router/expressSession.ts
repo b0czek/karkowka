@@ -2,7 +2,7 @@ import { createClient } from "redis";
 import { Config } from "../config";
 import session from "express-session";
 
-import connectRedis from "connect-redis";
+import connectRedis, { RedisStore as IRedisStore } from "connect-redis";
 const RedisStore = connectRedis(session);
 
 import express, { Request, Response, NextFunction } from "express";
@@ -11,8 +11,6 @@ import { Database } from "../database";
 import { User } from "../entities/User";
 
 export type RedisClient = ReturnType<typeof createClient>;
-
-const uuidv4Regex = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
 
 declare module "express-session" {
     interface SessionData {
@@ -23,6 +21,7 @@ declare module "express-session" {
 
 export class ExpressSession {
     private static redisClient: RedisClient;
+    private static redisStore: IRedisStore;
 
     public static sessionHandler: express.RequestHandler;
 
@@ -33,13 +32,15 @@ export class ExpressSession {
         });
         await this.redisClient.connect();
 
+        this.redisStore = new RedisStore({
+            client: this.redisClient,
+            ttl: Config.Session.ttl,
+            disableTouch: false,
+        });
+
         this.sessionHandler = session({
             secret: Config.Session.secret,
-            store: new RedisStore({
-                client: this.redisClient,
-                ttl: Config.Session.ttl,
-                disableTouch: false,
-            }),
+            store: this.redisStore,
             cookie: {
                 path: "/",
                 maxAge: Config.Session.ttl * 1000,
@@ -51,10 +52,11 @@ export class ExpressSession {
     }
 
     public static verifyLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
-        if (req.session.loggedIn === true && req.session.user_uuid && uuidv4Regex.test(req.session.user_uuid)) {
+        if (req.session.loggedIn === true && req.session.user_uuid) {
             try {
                 await Database.orm.em.findOneOrFail(User, {
                     uuid: req.session.user_uuid,
+                    deleted: false,
                 });
                 return next();
             } catch (err) {

@@ -20,7 +20,8 @@ export const examObjectCreate = (exam: Exam) => {
         time_to_join: exam.time_to_join,
         duration: exam.duration,
         questions_count: exam.questions_count,
-        question_list: exam.utilized_questions.getItems().map((question) => question.uuid),
+        question_list: exam.question_list.uuid,
+        questions: exam.utilized_questions.getItems().map((question) => question.uuid),
         participants: exam.participants.getItems().map((participant) => participant.uuid),
     };
 };
@@ -72,33 +73,32 @@ export const examRouterCreate = () => {
         async (req: Request, res: Response) => {
             let body: ExamPostBody = req.body;
 
-            // check if questions count is valid
-            try {
-                let questionsCount = await Database.orm.em.count(Question, {
-                    belongs_to: {
-                        uuid: body.question_list_uuid,
-                        owned_by: req.session.user_uuid,
-                    },
-                });
-                if (questionsCount < body.questions_count) {
-                    return AppRouter.badRequest(res, "questions_count must not exceed question list's question count");
-                }
-            } catch (err) {
-                return AppRouter.internalServerError(res);
-            }
-
-            // randomly select questions
+            // check if questions count is valid and select random questions
             let randomQuestionsUuids: string[] = [];
+
             try {
                 let questions = await Database.orm.em.find(
                     Question,
                     {
-                        belongs_to: body.question_list_uuid,
+                        belongs_to: {
+                            owned_by: {
+                                uuid: req.session.user_uuid,
+                                deleted: false,
+                            },
+                            deleted: false,
+                        },
+                        deleted: false,
                     },
                     {
                         fields: ["uuid"],
                     }
                 );
+
+                if (questions.length < body.questions_count) {
+                    return AppRouter.badRequest(res, "questions_count must not exceed question list's question count");
+                }
+
+                // select random questions
                 let randomQuestions = lodash.sampleSize(questions, body.questions_count);
                 randomQuestionsUuids = randomQuestions.map((question) => question.uuid);
             } catch (err) {
@@ -125,6 +125,67 @@ export const examRouterCreate = () => {
             } catch (err) {
                 return AppRouter.internalServerError(res);
             }
+        }
+    );
+
+    router.delete(
+        "/",
+        ExpressSession.verifyLoggedIn,
+        checkSchema(examUuidSchema),
+        rejectIfBadRequest,
+        async (req: Request, res: Response) => {
+            let body: ExamUUIDBody = req.body;
+            let exam: Exam;
+            try {
+                let e = await Database.orm.em.findOne(
+                    Exam,
+                    {
+                        uuid: body.exam_uuid,
+                        hosted_by: req.session.user_uuid,
+                    },
+                    {
+                        fields: ["question_list.utilized_in", "participants", "participants.participated_exams"],
+                    }
+                );
+                if (!e) {
+                    return AppRouter.notFound(res);
+                }
+                exam = e;
+            } catch (err) {
+                return AppRouter.internalServerError(res);
+            }
+
+            // check if question list should be removed
+            if (
+                exam.question_list.deleted &&
+                exam.question_list.utilized_in.getItems().every((uExam) => uExam.uuid === exam.uuid)
+            ) {
+                Database.orm.em.remove(exam.question_list);
+            }
+            // check if any of the participants should be removed
+            let participantsToRemove = exam.participants
+                .getItems()
+                .filter(
+                    (participant) =>
+                        participant.deleted &&
+                        participant.participated_exams
+                            .getItems()
+                            .every((participated_exam) => participated_exam.uuid === exam.uuid)
+                );
+            Database.orm.em.remove(participantsToRemove);
+
+            // remove the exam
+            Database.orm.em.remove(exam);
+
+            try {
+                await Database.orm.em.flush();
+            } catch (err) {
+                return AppRouter.internalServerError(res);
+            }
+
+            return res.json({
+                error: false,
+            });
         }
     );
 
@@ -156,7 +217,9 @@ const examPostSchema: Schema = {
     },
     "participants_uuids.*": {
         ...validators.string,
-        ...validators.existsInDb(User, "uuid"),
+        ...validators.existsInDb(User, "uuid", false, {
+            deleted: false,
+        }),
     },
 };
 

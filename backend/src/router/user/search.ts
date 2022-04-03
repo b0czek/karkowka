@@ -22,6 +22,7 @@ export const userSearchRouterCreate = () => {
                     User,
                     {
                         username: body.username,
+                        deleted: false,
                     },
                     {
                         fields: ["uuid"],

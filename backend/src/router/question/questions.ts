@@ -6,7 +6,7 @@ import { Database } from "../../database";
 import { Question } from "../../entities/Question";
 import { QuestionList } from "../../entities/QuestionList";
 import { AppRouter } from "..";
-import { questionArraySchema, QuestionBody } from "./questionSchema";
+import { questionArraySchema, QuestionBody, questionObjectCreate } from "./questionSchema";
 
 export const questionsRouterCreate = () => {
     const router = express.Router();
@@ -33,7 +33,7 @@ export const questionsRouterCreate = () => {
                 );
                 return res.json({
                     error: false,
-                    // questions: questions.map(questionObjectCreate),
+                    questions: questions.map(questionObjectCreate),
                 });
             } catch (err) {
                 return AppRouter.internalServerError(res, "could not fetch database");
@@ -52,7 +52,11 @@ export const questionsRouterCreate = () => {
             try {
                 let questionList = await Database.orm.em.findOne(QuestionList, {
                     uuid: body.question_list_uuid,
-                    owned_by: req.session.user_uuid,
+                    owned_by: {
+                        uuid: req.session.user_uuid,
+                        deleted: false,
+                    },
+                    deleted: false,
                 });
                 if (!questionList) {
                     return AppRouter.notFound(res);

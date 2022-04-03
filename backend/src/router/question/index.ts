@@ -7,7 +7,7 @@ import { Database } from "../../database";
 import { Question } from "../../entities/Question";
 import { QuestionList } from "../../entities/QuestionList";
 import { AppRouter } from "..";
-import { QuestionBody, questionObjectCreate, questionParamSchema } from "./questionSchema";
+import { questionAnswerParamSchema, QuestionBody, questionObjectCreate } from "./questionSchema";
 import { questionsRouterCreate } from "./questions";
 
 export const questionRouterCreate = () => {
@@ -55,6 +55,7 @@ export const questionRouterCreate = () => {
                 let questionList = await Database.orm.em.findOne(QuestionList, {
                     uuid: body.question_list_uuid,
                     owned_by: req.session.user_uuid,
+                    deleted: false,
                 });
                 if (!questionList) {
                     return AppRouter.notFound(res);
@@ -64,14 +65,14 @@ export const questionRouterCreate = () => {
             }
 
             let question = Database.orm.em.create(Question, {
-                question: body.question.question,
-                answers: body.question.answers,
+                question: body.question,
+                answers: body.answers,
                 belongs_to: body.question_list_uuid,
             });
             try {
                 await Database.orm.em.persistAndFlush(question);
             } catch (err) {
-                return AppRouter.internalServerError(res);
+                return AppRouter.internalServerError(res, "could not persist the question");
             }
             return res.status(201).json({
                 error: false,
@@ -80,6 +81,56 @@ export const questionRouterCreate = () => {
         }
     );
 
+    router.delete(
+        "/",
+        ExpressSession.verifyLoggedIn,
+        checkSchema(questionDeleteSchema),
+        rejectIfBadRequest,
+        async (req: Request, res: Response) => {
+            let body: QuestionDeleteBody = req.body;
+            let question: Question;
+            try {
+                let q = await Database.orm.em.findOne(
+                    Question,
+                    {
+                        uuid: body.question_uuid,
+                        belongs_to: {
+                            uuid: body.question_list_uuid,
+                            owned_by: req.session.user_uuid,
+                        },
+                        deleted: false,
+                    },
+                    {
+                        fields: ["uuid", "utilized_in.uuid"],
+                    }
+                );
+                if (!q) {
+                    return AppRouter.notFound(res);
+                }
+                question = q;
+            } catch (err) {
+                return AppRouter.internalServerError(res);
+            }
+
+            if (question.utilized_in.count() > 0) {
+                Database.orm.em.assign(question, {
+                    deleted: true,
+                });
+            } else {
+                Database.orm.em.remove(question);
+            }
+
+            try {
+                await Database.orm.em.flush();
+            } catch (err) {
+                return AppRouter.internalServerError(res, "could not remove question");
+            }
+
+            return res.json({
+                error: false,
+            });
+        }
+    );
     return router;
 };
 
@@ -105,19 +156,21 @@ interface QuestionGetBody {
 
 const questionPostSchema: Schema = {
     ...questionListUuidSchema,
-    question: questionParamSchema,
+    question: validators.string,
+    answers: questionAnswerParamSchema,
 };
 
-interface QuestionPostBody {
+interface QuestionPostBody extends QuestionBody {
     question_list_uuid: string;
-    question: QuestionBody;
 }
 
-// const questionDeleteSchema: Schema = {
-//     ...questionListUuidSchema,
-//     question_uuid: validators.uuid,
-// };
+const questionDeleteSchema: Schema = {
+    ...questionListUuidSchema,
+    question_uuid: validators.uuid,
+};
 
-// interface QuestionDeleteBody extends QuestionGetBody {
-//     questions_uuid: string;
-// }
+interface QuestionDeleteBody {
+    question_list_uuid: string;
+
+    question_uuid: string;
+}

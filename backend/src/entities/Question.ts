@@ -24,4 +24,7 @@ export class Question {
 
     @OneToMany(() => ExamAnswer, (answer) => answer.question, { cascade: [Cascade.ALL] })
     user_answers = new Collection<ExamAnswer>(this);
+
+    @Property({ type: "boolean" })
+    deleted?: boolean = false;
 }
