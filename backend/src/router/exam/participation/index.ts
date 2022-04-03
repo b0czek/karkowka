@@ -14,7 +14,7 @@ const examParticipationObjectCreate = (examParticipation: ExamParticipation) => 
         uuid: examParticipation.uuid,
         joined_at: examParticipation.joined_at,
         answers: examParticipation.answers.getItems().map((answer) => answer.uuid),
-        corrent_answers_count: examParticipation.answers.getItems().filter((answer) => answer.is_correct).length,
+        correct_answers_count: examParticipation.answers.getItems().filter((answer) => answer.is_correct).length,
         exam: examParticipation.exam.uuid,
     };
 };
