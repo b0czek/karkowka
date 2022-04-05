@@ -29,7 +29,7 @@ export interface ExamObject {
 interface ExamCreateBody {
     name: string;
     time_to_join: number;
-    started_at: Date | string;
+    started_at: string;
     duration: number;
     questions_count: number;
     question_list_uuid: string;

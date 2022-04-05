@@ -24,7 +24,9 @@ export class RegisterControls extends React.Component {
         });
     };
 
-    handleRegistration = async () => {
+    handleRegistration = async (e: React.FormEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
         this.setState({ message: "", isError: false });
         try {
             let response = await User.create({
@@ -49,7 +51,7 @@ export class RegisterControls extends React.Component {
 
     render() {
         return (
-            <>
+            <Form>
                 {this.state.message.length > 0 ? <this.RegistrationAlert /> : null}
                 <Form.Group className="mb-3">
                     <Form.Label>Name</Form.Label>
@@ -66,7 +68,7 @@ export class RegisterControls extends React.Component {
                 <Button variant="primary" type="submit" className="w-100" onClick={this.handleRegistration}>
                     Register
                 </Button>
-            </>
+            </Form>
         );
     }
 }

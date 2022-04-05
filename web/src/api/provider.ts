@@ -1,38 +1,61 @@
-import { LoginState } from "../loginState";
+import { LoginState } from "../loginContext";
+import Cookie from "js-cookie";
 
 export interface ResponseBase {
     error: boolean;
     message: string | undefined;
 }
+export interface FetchBody {
+    [key: string]: any;
+}
+
 const isDev = () => !process.env.NODE_ENV || process.env.NODE_ENV === "development";
 
 export class ApiProvider {
     protected static path: string = "/";
 
-    public static setLoginState?: (state: LoginState) => void;
+    public static setLoginState: (state: LoginState) => void = (state) => state;
 
-    public static async _fetch<T extends object, P extends ResponseBase>(method: string, body: T): Promise<P> {
+    protected static clearSession = () => {
+        this.setLoginState({
+            loggedIn: false,
+            user: undefined,
+        });
+
+        Cookie.remove("sessionID");
+    };
+
+    public static async _fetch<T extends FetchBody, P extends ResponseBase>(method: string, body: T): Promise<P> {
         return new Promise<P>(async (resolve, reject) => {
             try {
-                let url = `${window.location.protocol}//${isDev() ? "localhost:3001" : window.location.host}/api${this.path}`;
+                let url = new URL(
+                    `${window.location.protocol}//${isDev() ? "localhost:3001" : window.location.host}/api${this.path}`
+                );
+                if (method.toLowerCase() === "get") {
+                    url.search = new URLSearchParams(body).toString();
+                }
+
                 if (isDev()) {
                     console.log(url);
                 }
-                let req = await fetch(url, {
-                    method,
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(body),
+
+                let req = await fetch(url.href, {
+                    method: method.toUpperCase(),
+                    headers:
+                        method.toLowerCase() !== "get"
+                            ? {
+                                  "Content-Type": "application/json",
+                              }
+                            : undefined,
+                    body: method.toLowerCase() !== "get" ? JSON.stringify(body) : undefined,
+                    credentials: "include",
                 });
 
-                if (req.status == 401 && this.setLoginState) {
-                    this.setLoginState({
-                        loggedIn: false,
-                        name: undefined,
-                        username: undefined,
-                    });
+                // if authentication fails, log out
+                if (req.status === 401) {
+                    this.clearSession();
                 }
+
                 resolve(await req.json());
             } catch (err) {
                 reject(err);

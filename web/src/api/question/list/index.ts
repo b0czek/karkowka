@@ -22,7 +22,8 @@ export interface QuestionListObject {
     uuid: string;
     created_at: string;
     name: string;
-    questions: QuestionObject[];
+    questions?: QuestionObject[];
+    questions_count: number;
     deleted: boolean;
 }
 

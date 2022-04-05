@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./components/login/App";
+import App from "./components/App";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import { LoginStateProvider } from "./loginState";
+import { LoginStateProvider } from "./loginContext";
 
 ReactDOM.render(
     <React.StrictMode>
