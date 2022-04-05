@@ -12,10 +12,10 @@ export const userSearchRouterCreate = () => {
     router.get(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(userSearchSchema),
+        checkSchema(userSearchSchema, ["query"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
-            let body: UserSearchBody = req.body;
+            let body: UserSearchBody = (<any>req.query) as UserSearchBody;
 
             try {
                 let user = await Database.orm.em.findOne(

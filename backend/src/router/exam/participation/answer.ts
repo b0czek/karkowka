@@ -34,10 +34,10 @@ export const examAnswerRouterCreate = () => {
     router.get(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(examAnswerGetSchema),
+        checkSchema(examAnswerGetSchema, ["query"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
-            let body: ExamAnswerGetBody = req.body;
+            let body: ExamAnswerGetBody = (<any>req.query) as ExamAnswerGetBody;
             try {
                 let answer = await Database.orm.em.findOne(ExamAnswer, {
                     uuid: body.answer_uuid,
@@ -62,7 +62,7 @@ export const examAnswerRouterCreate = () => {
     router.post(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(examAnswerPostSchema),
+        checkSchema(examAnswerPostSchema, ["body"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
             let body: ExamAnswerPostSchema = req.body;

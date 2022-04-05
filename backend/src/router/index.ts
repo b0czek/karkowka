@@ -30,7 +30,13 @@ export class AppRouter {
         await ExpressSession.init();
         router.use(ExpressSession.sessionHandler);
 
-        router.use(express.json(), cors());
+        router.use(
+            express.json(),
+            cors({
+                credentials: true,
+                origin: process.env.NODE_ENV === "production" ? "*" : "http://localhost:3000",
+            })
+        );
 
         router.use("/user", userRouterCreate());
         router.use("/session", sessionRouterCreate());

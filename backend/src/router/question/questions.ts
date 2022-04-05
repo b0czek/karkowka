@@ -14,10 +14,10 @@ export const questionsRouterCreate = () => {
     router.get(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(questionsGetSchema),
+        checkSchema(questionsGetSchema, ["query"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
-            let body: QuestionsGetBody = req.body;
+            let body: QuestionsGetBody = (<any>req.query) as QuestionsGetBody;
             try {
                 let questions = await Database.orm.em.find(
                     Question,
@@ -44,7 +44,7 @@ export const questionsRouterCreate = () => {
     router.post(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(questionsPostSchema),
+        checkSchema(questionsPostSchema, ["body"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
             let body: QuestionsPostBody = req.body;

@@ -20,10 +20,10 @@ export const examQuestionsRouterCreate = () => {
     router.get(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(examQuestionsGetSchema),
+        checkSchema(examQuestionsGetSchema, ["query"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
-            let body: ExamQuestionsGetBody = req.body;
+            let body: ExamQuestionsGetBody = (<any>req.query) as ExamQuestionsGetBody;
             try {
                 let questions = await Database.orm.em.find(
                     Question,

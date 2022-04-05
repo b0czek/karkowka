@@ -3,7 +3,13 @@ import { Question } from "../../entities/Question";
 import validators from "../validators";
 
 export const questionObjectCreate = (question: Question) => {
-    return { uuid: question.uuid, answers: question.answers, question: question.question, deleted: question.deleted };
+    return {
+        uuid: question.uuid,
+        answers: question.answers,
+        question: question.question,
+        deleted: question.deleted,
+        created_at: question.created_at,
+    };
 };
 
 export const questionAnswerParamSchema: ParamSchema = {

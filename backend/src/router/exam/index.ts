@@ -35,10 +35,10 @@ export const examRouterCreate = () => {
     router.get(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(examUuidSchema),
+        checkSchema(examUuidSchema, ["query"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
-            let body: ExamUUIDBody = req.body;
+            let body: ExamUUIDBody = (<any>req.query) as ExamUUIDBody;
             try {
                 let exam = await Database.orm.em.findOne(
                     Exam,
@@ -68,7 +68,7 @@ export const examRouterCreate = () => {
     router.post(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(examPostSchema),
+        checkSchema(examPostSchema, ["body"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
             let body: ExamPostBody = req.body;
@@ -131,7 +131,7 @@ export const examRouterCreate = () => {
     router.delete(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(examUuidSchema),
+        checkSchema(examUuidSchema, ["body"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
             let body: ExamUUIDBody = req.body;

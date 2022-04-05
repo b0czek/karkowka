@@ -9,12 +9,14 @@ import { questionArraySchema, QuestionBody, questionObjectCreate } from "../ques
 import { questionListsRouterCreate } from "./lists";
 import { questionListUuidSchema } from "..";
 
-export const questionListObjectCreate = (questionList: QuestionList) => {
+export const questionListObjectCreate = (questionList: QuestionList, withQuestions: boolean = false) => {
+    let questions = withQuestions ? questionList.questions.getItems().map(questionObjectCreate) : undefined;
     return {
         uuid: questionList.uuid,
         created_at: questionList.created_at,
         name: questionList.name,
-        questions: questionList.questions.getItems().map(questionObjectCreate),
+        questions: questions,
+        questions_count: questionList.questions.length,
         deleted: questionList.deleted,
     };
 };
@@ -27,10 +29,11 @@ export const questionListRouterCreate = () => {
     router.get(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(questionListGetSchema),
+        checkSchema(questionListGetSchema, ["query"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
-            let body: QuestionListGetBody = req.body;
+            let body: QuestionListGetBody = (<any>req.query) as QuestionListGetBody;
+
             try {
                 let question_list = await Database.orm.em.findOne(
                     QuestionList,
@@ -48,6 +51,7 @@ export const questionListRouterCreate = () => {
                             "questions.deleted",
                             "uuid",
                         ],
+                        orderBy: {},
                     }
                 );
                 if (!question_list) {
@@ -56,7 +60,7 @@ export const questionListRouterCreate = () => {
 
                 return res.json({
                     error: false,
-                    question_list: questionListObjectCreate(question_list),
+                    question_list: questionListObjectCreate(question_list, true),
                 });
             } catch (err) {
                 return AppRouter.internalServerError(res, "could not fetch database");
@@ -67,7 +71,7 @@ export const questionListRouterCreate = () => {
     router.post(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(questionListCreateSchema),
+        checkSchema(questionListCreateSchema, ["body"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
             let body: QuestionListCreateBody = req.body;
@@ -97,7 +101,7 @@ export const questionListRouterCreate = () => {
     router.delete(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(questionListDeleteSchema),
+        checkSchema(questionListDeleteSchema, ["body"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
             let body: QuestionListDeleteBody = req.body;

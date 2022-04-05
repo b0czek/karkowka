@@ -34,10 +34,10 @@ export const examParticipationRouterCreate = () => {
     router.get(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(examParticipationGetSchema),
+        checkSchema(examParticipationGetSchema, ["query"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
-            let body: ExamParticipationGetBody = req.body;
+            let body: ExamParticipationGetBody = (<any>req.query) as ExamParticipationGetBody;
             try {
                 let participation = await Database.orm.em.findOne(
                     ExamParticipation,
@@ -66,7 +66,7 @@ export const examParticipationRouterCreate = () => {
     router.post(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(examParticipationPostSchema),
+        checkSchema(examParticipationPostSchema, ["body"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
             let body: ExamParticipationPostBody = req.body;

@@ -30,10 +30,10 @@ export const userRouterCreate = () => {
     router.get(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(userGetSchema),
+        checkSchema(userGetSchema, ["query"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
-            let body: UserGetBody = req.body;
+            let body: UserGetBody = (<any>req.query) as UserGetBody;
             try {
                 let user = await Database.orm.em.findOne(User, {
                     uuid: body.user_uuid ?? req.session.user_uuid,
@@ -52,7 +52,7 @@ export const userRouterCreate = () => {
     );
 
     //create user
-    router.post("/", checkSchema(userRegistrationSchema), rejectIfBadRequest, async (req: Request, res: Response) => {
+    router.post("/", checkSchema(userRegistrationSchema, ["body"]), rejectIfBadRequest, async (req: Request, res: Response) => {
         let params: UserRegistrationBody = req.body;
         let passwordHash = await bcrypt.hash(params.password, Config.Session.hashingRounds);
 

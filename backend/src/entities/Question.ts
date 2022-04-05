@@ -10,6 +10,9 @@ export class Question {
     @PrimaryKey({ type: "string" })
     uuid: string = crypto.randomUUID();
 
+    @Property({ type: Date })
+    created_at? = new Date();
+
     @Property({ type: ArrayType, nullable: false })
     answers: string[];
 

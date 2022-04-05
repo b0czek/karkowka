@@ -44,6 +44,7 @@ export class ExpressSession {
             cookie: {
                 path: "/",
                 maxAge: Config.Session.ttl * 1000,
+                httpOnly: false,
             },
             resave: false,
             saveUninitialized: false,
