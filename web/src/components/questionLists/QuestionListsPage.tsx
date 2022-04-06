@@ -2,6 +2,7 @@ import React from "react";
 import { Col } from "react-bootstrap";
 import { QuestionListObject } from "../../api/question/list";
 import { QuestionLists } from "../../api/question/list/lists";
+import { handleRequestErrorWrapper } from "../../errorContext";
 import { Page } from "../Page";
 import { QuestionListCard } from "../questionList/QuestionListCard";
 
@@ -9,7 +10,11 @@ export const QuestionListsPage = () => {
     const [lists, setLists] = React.useState<QuestionListObject[]>([]);
 
     React.useEffect(() => {
-        QuestionLists.get().then((lists) => {
+        handleRequestErrorWrapper(QuestionLists.get, {}).then((lists) => {
+            if (typeof lists === "string") {
+                return;
+            }
+
             setLists(lists.question_lists);
         });
     }, []);

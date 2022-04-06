@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 import React, { Dispatch } from "react";
 import { ApiProvider } from "./api/provider";
 import { User } from "./api/user";
+import { handleRequestErrorWrapper } from "./errorContext";
 
 const isSessionCookieSet = () => Object.keys(Cookies.get()).some((key) => key === "sessionID");
 
@@ -24,22 +25,19 @@ export const LoginStateProvider = (props: any) => {
     );
 
     const fetchUser = async () => {
-        try {
-            let user = await User.get();
-            if (user.error) {
-                return;
-            }
-            dispatch({
-                loggedIn: true,
-                user: {
-                    name: user.user.name,
-                    username: user.user.username,
-                    uuid: user.user.uuid,
-                },
-            });
-        } catch (err: any) {
-            console.error(err.message);
+        let user = await handleRequestErrorWrapper(User.get, {});
+        if (typeof user === "string") {
+            return;
         }
+
+        dispatch({
+            loggedIn: true,
+            user: {
+                name: user.user.name,
+                username: user.user.username,
+                uuid: user.user.uuid,
+            },
+        });
     };
 
     React.useEffect(() => {

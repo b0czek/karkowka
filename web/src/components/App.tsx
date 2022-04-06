@@ -7,6 +7,7 @@ import { NavBar } from "./NavBar";
 import { QuestionListsPage } from "./questionLists/QuestionListsPage";
 import { QuestionListPage } from "./questionList/QuestionListPage";
 import { NotFound } from "./NotFound";
+import { ErrorDisplay } from "./ErrorDisplay";
 
 const AuthRoute = (props: { [key: string]: any; children: JSX.Element }) => {
     const [loginState, _] = useLoginState();
@@ -22,6 +23,7 @@ const App = () => {
     return (
         <Router>
             <NavBar />
+            <ErrorDisplay />
             <Routes>
                 <Route path="/login/*" element={<LoginPage />} />
 

@@ -28,12 +28,15 @@ export const NavBar = () => {
             <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-between">
                 <Nav className="mr-auto">
                     {navLinks.map((navLink, idx) => (
-                        <Link
-                            className={`nav-link ${location.pathname.startsWith(navLink.path) ? "active" : ""}`}
+                        <Nav.Link
+                            as={Link}
+                            eventKey={idx}
+                            // className={location.pathname.startsWith(navLink.path) ? "active" : ""}
                             to={navLink.path}
+                            key={idx}
                         >
                             {navLink.name}
-                        </Link>
+                        </Nav.Link>
                     ))}
                 </Nav>
                 <Nav>

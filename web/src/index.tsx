@@ -5,12 +5,15 @@ import App from "./components/App";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import { LoginStateProvider } from "./loginContext";
+import { ErrorStateProvider } from "./errorContext";
 
 ReactDOM.render(
     <React.StrictMode>
-        <LoginStateProvider>
-            <App />
-        </LoginStateProvider>
+        <ErrorStateProvider>
+            <LoginStateProvider>
+                <App />
+            </LoginStateProvider>
+        </ErrorStateProvider>
     </React.StrictMode>,
     document.getElementById("root")
 );

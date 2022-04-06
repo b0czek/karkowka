@@ -3,6 +3,7 @@ import { Button, Col, Form, FormControl, InputGroup, Row } from "react-bootstrap
 import { Question, QuestionObject } from "../../api/question";
 import { BsX, BsPlus, BsXLg, BsCheckLg } from "react-icons/bs";
 import { useParams } from "react-router-dom";
+import { handleRequestErrorWrapper } from "../../errorContext";
 const Answer = (props: AnswerProps) => {
     return (
         <InputGroup className="mb-1">
@@ -55,32 +56,30 @@ export const QuestionRow = (props: QuestionProps) => {
     const onAnswerAdd = () => dispatch({ answers: [...state.answers, ""] });
 
     const onQuestionSave = async () => {
-        try {
-            let res = await Question.edit({
-                answers: state.answers,
-                question: state.question,
-                question_list_uuid: params.list_uuid!,
-                question_uuid: props.question.uuid,
-            });
+        let res = await handleRequestErrorWrapper(Question.edit, {
+            answers: state.answers,
+            question: state.question,
+            question_list_uuid: params.list_uuid!,
+            question_uuid: props.question.uuid,
+        });
+        if (typeof res === "string") {
+            return;
+        }
 
-            if (!res.error) {
-                dispatch({ wasEdited: false });
-            }
-        } catch (err) {}
+        dispatch({ wasEdited: false });
     };
 
     const onQuestionDelete = async () => {
-        try {
-            let res = await Question.delete({
-                question_list_uuid: params.list_uuid!,
-                question_uuid: props.question.uuid,
-            });
+        let res = await handleRequestErrorWrapper(Question.delete, {
+            question_list_uuid: params.list_uuid!,
+            question_uuid: props.question.uuid,
+        });
+        if (typeof res === "string") {
+            return;
+        }
 
-            if (!res.error) {
-                dispatch({ wasEdited: false });
-                props.onDelete(props.idx);
-            }
-        } catch (err) {}
+        dispatch({ wasEdited: false });
+        props.onDelete(props.idx);
     };
 
     return (
@@ -95,7 +94,7 @@ export const QuestionRow = (props: QuestionProps) => {
                     onChange={onQuestionChange}
                 />
             </Col>
-            <Col xs={11} md={5} className={"pt-3 pt-md-0"}>
+            <Col xs={10} md={5} className={"pt-3 pt-md-0"}>
                 {state.answers.map((answer, idx) => (
                     <Answer answer={answer} key={idx} onChange={onAnswerChange} onDelete={onAnswerDelete} idx={idx} />
                 ))}
