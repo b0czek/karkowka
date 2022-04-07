@@ -12,6 +12,9 @@ export class ExamParticipation {
     @Property({ type: Date })
     joined_at?: Date = new Date();
 
+    @Property({ type: Date, nullable: true })
+    finished_at?: Date;
+
     @ManyToOne(() => User)
     participant: User;
 

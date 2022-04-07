@@ -50,10 +50,10 @@ export const QuestionRow = (props: QuestionProps) => {
         });
     };
     const onAnswerDelete = (idx: number) => {
-        dispatch({ answers: [...state.answers].filter((_, i) => i !== idx) });
+        dispatch({ wasEdited: true, answers: [...state.answers].filter((_, i) => i !== idx) });
     };
 
-    const onAnswerAdd = () => dispatch({ answers: [...state.answers, ""] });
+    const onAnswerAdd = () => dispatch({ wasEdited: true, answers: [...state.answers, ""] });
 
     const onQuestionSave = async () => {
         let res = await handleRequestErrorWrapper(Question.edit, {
@@ -99,7 +99,7 @@ export const QuestionRow = (props: QuestionProps) => {
                     <Answer answer={answer} key={idx} onChange={onAnswerChange} onDelete={onAnswerDelete} idx={idx} />
                 ))}
                 <Button variant="outline-primary" className="w-100" onClick={onAnswerAdd}>
-                    <BsPlus />
+                    Add answer <BsPlus />
                 </Button>
             </Col>
             <Col className="px-0 d-flex justify-content-center align-items-center">

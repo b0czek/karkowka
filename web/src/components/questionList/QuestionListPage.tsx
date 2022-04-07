@@ -11,11 +11,23 @@ export const QuestionListPage = () => {
     const [wasDeleted, setWasDeleted] = React.useState(false);
     const params = useParams();
 
+    const pasteHandler = (e: ClipboardEvent) => {
+        console.log(e.clipboardData);
+        console.log(e.clipboardData?.getData("text"));
+    };
+
     React.useEffect(() => {
         let uuid = params.list_uuid;
         if (!uuid) return;
 
         QuestionList.get(uuid).then((list) => setQuestionList(list.question_list));
+        // @ts-ignore
+        window.addEventListener("paste", pasteHandler);
+
+        return () => {
+            // @ts-ignore
+            window.removeEventListener("paste", pasteHandler);
+        };
     }, []);
 
     if (wasDeleted) {
@@ -37,7 +49,7 @@ export const QuestionListPage = () => {
     };
 
     return (
-        <Page className="pt-3">
+        <Page>
             <Col xs={11} sm={11} md={10} lg={10} xl={10}>
                 {questionList ? (
                     <QuestionListCard

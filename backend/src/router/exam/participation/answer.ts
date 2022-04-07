@@ -89,8 +89,9 @@ export const examAnswerRouterCreate = () => {
                 return AppRouter.internalServerError(res);
             }
             // check if participation is open
+            let participation: ExamParticipation;
             try {
-                let participation = await Database.orm.em.findOne(
+                let p = await Database.orm.em.findOne(
                     ExamParticipation,
                     {
                         participant: req.session.user_uuid,
@@ -100,12 +101,13 @@ export const examAnswerRouterCreate = () => {
                         fields: ["joined_at", "exam.duration"],
                     }
                 );
-                if (!participation) {
+                if (!p) {
                     return AppRouter.notFound(res, "participation with such uuid does not exist");
                 }
-                if (!isParticipationOpen(participation.joined_at!, participation.exam.duration)) {
+                if (!isParticipationOpen(p.joined_at!, p.exam.duration)) {
                     return AppRouter.forbidden(res, "participation closed");
                 }
+                participation = p;
             } catch (err) {
                 return AppRouter.internalServerError(res);
             }
@@ -146,9 +148,16 @@ export const examAnswerRouterCreate = () => {
                 participation: body.participation_uuid,
                 question: body.question_uuid,
             });
+            Database.orm.em.persist(answer);
+
+            if (participation.exam.questions_count === participation.answers.count()) {
+                Database.orm.em.assign(participation, {
+                    finished_at: answer.anwsered_at,
+                });
+            }
 
             try {
-                Database.orm.em.persistAndFlush(answer);
+                Database.orm.em.flush();
             } catch (err) {
                 return AppRouter.internalServerError(res);
             }

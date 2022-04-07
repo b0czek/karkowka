@@ -116,15 +116,17 @@ export const examRouterCreate = () => {
                 utilized_questions: randomQuestionsUuids,
                 participants: body.participants_uuids,
             });
+            console.log(exam);
             try {
                 await Database.orm.em.persistAndFlush(exam);
-                return res.status(201).json({
-                    error: false,
-                    exam_uuid: exam.uuid,
-                });
             } catch (err) {
                 return AppRouter.internalServerError(res);
             }
+
+            return res.status(201).json({
+                error: false,
+                exam_uuid: exam.uuid,
+            });
         }
     );
 
@@ -172,7 +174,9 @@ export const examRouterCreate = () => {
                             .getItems()
                             .every((participated_exam) => participated_exam.uuid === exam.uuid)
                 );
-            Database.orm.em.remove(participantsToRemove);
+            if (participantsToRemove.length > 0) {
+                Database.orm.em.remove(participantsToRemove);
+            }
 
             // remove the exam
             Database.orm.em.remove(exam);

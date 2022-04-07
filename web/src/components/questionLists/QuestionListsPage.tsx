@@ -1,10 +1,13 @@
 import React from "react";
-import { Col } from "react-bootstrap";
+import { Button, Card, Col, FormControl, InputGroup } from "react-bootstrap";
+import { BsPlus } from "react-icons/bs";
+import { Navigate } from "react-router-dom";
 import { QuestionListObject } from "../../api/question/list";
 import { QuestionLists } from "../../api/question/list/lists";
 import { handleRequestErrorWrapper } from "../../errorContext";
 import { Page } from "../Page";
 import { QuestionListCard } from "../questionList/QuestionListCard";
+import { QuestionListCreateCard } from "./QuestionListCreateCard";
 
 export const QuestionListsPage = () => {
     const [lists, setLists] = React.useState<QuestionListObject[]>([]);
@@ -22,8 +25,9 @@ export const QuestionListsPage = () => {
     const onDelete = (uuid: string) => setLists(lists.filter((list) => list.uuid !== uuid));
 
     return (
-        <Page className="pt-3">
+        <Page>
             <Col xs={11} sm={11} md={10} lg={10} xl={10}>
+                <QuestionListCreateCard />
                 {lists
                     .filter((list) => !list.deleted)
                     .map((list, idx) => (

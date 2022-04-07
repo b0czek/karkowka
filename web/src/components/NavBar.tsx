@@ -20,7 +20,7 @@ export const NavBar = () => {
     const location = useLocation();
 
     return location.pathname.startsWith("/login") ? null : (
-        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className="px-3 py-2">
+        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className="px-3 py-2 mb-3">
             <Link className="navbar-brand" to="/">
                 Karkówka
             </Link>

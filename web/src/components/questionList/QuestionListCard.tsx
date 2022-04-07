@@ -1,34 +1,10 @@
 import React from "react";
 import { Button, Card, CloseButton, Col, Container, ListGroup, ListGroupItem, Row } from "react-bootstrap";
-import { BsPlus } from "react-icons/bs";
 import { Link, Navigate } from "react-router-dom";
-import { prototype } from "stream";
 import { Question, QuestionObject } from "../../api/question";
 import { QuestionList, QuestionListObject } from "../../api/question/list";
 import { handleRequestErrorWrapper } from "../../errorContext";
-import { QuestionRow } from "./QuestionRow";
-interface QuestionsProps {
-    questions: QuestionObject[];
-    deleteQuestion: (questionIdx: number) => void;
-    addQuestion: () => void;
-}
-
-const Questions = ({ questions, deleteQuestion, addQuestion }: QuestionsProps) => {
-    return (
-        <ListGroup>
-            {questions.map((question, idx) => (
-                <ListGroup.Item key={idx}>
-                    <QuestionRow question={question} key={idx} idx={idx} onDelete={deleteQuestion} />
-                </ListGroup.Item>
-            ))}
-            <ListGroup.Item>
-                <Button variant="primary" className="w-100" onClick={addQuestion}>
-                    <BsPlus />
-                </Button>
-            </ListGroup.Item>
-        </ListGroup>
-    );
-};
+import { QuestionsList } from "./QuestionsList";
 
 export const QuestionListCard = (props: QuestionListCardProps) => {
     let date = new Date(props.questionList.created_at);
@@ -83,7 +59,7 @@ export const QuestionListCard = (props: QuestionListCardProps) => {
                     Created at: {date.toLocaleDateString()} {date.toLocaleTimeString()}
                 </Card.Text>
                 {props.with_answers ? (
-                    <Questions
+                    <QuestionsList
                         questions={props.questionList.questions!}
                         deleteQuestion={questionDelete}
                         addQuestion={questionAdd}
