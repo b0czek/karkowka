@@ -79,7 +79,7 @@ export const questionsRouterCreate = () => {
             }
             return res.status(201).json({
                 error: false,
-                question_uuids: questions.map((q) => q.uuid),
+                questions_uuids: questions.map((q) => q.uuid),
             });
         }
     );
