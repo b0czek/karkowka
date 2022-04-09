@@ -10,6 +10,7 @@ import { Config } from "../../config";
 import { ExpressSession } from "../expressSession";
 import { userSearchRouterCreate } from "./search";
 import { userParticipatedExamsRouterCreate } from "./participatedExams";
+import { userPasswordRouterCreate } from "./password";
 
 export const userObjectCreate = (user: User) => {
     return {
@@ -26,6 +27,7 @@ export const userRouterCreate = () => {
 
     router.use("/search", userSearchRouterCreate());
     router.use("/participated_exams", userParticipatedExamsRouterCreate());
+    router.use("/password", userPasswordRouterCreate());
 
     router.get(
         "/",
