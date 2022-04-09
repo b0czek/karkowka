@@ -10,9 +10,9 @@ interface ErrorToastProps {
 
 const ErrorToast = (props: ErrorToastProps) => {
     return (
-        <Toast onClose={() => props.removeError(props.idx)}>
+        <Toast onClose={() => props.removeError(props.idx)} autohide={true}>
             <Toast.Header style={{ color: "#fff", backgroundColor: props.error.type === "error" ? "#dc3545" : "#ffc107" }}>
-                <strong className="me-auto">Error</strong>
+                <strong className="me-auto">{props.error.type === "error" ? "Error" : "Warning"}</strong>
             </Toast.Header>
             <Toast.Body>{props.error.message}</Toast.Body>
         </Toast>
@@ -25,7 +25,7 @@ export const ErrorDisplay = () => {
     const removeError = (idx: number) => setErrorState(errorState.filter((_, i) => i !== idx));
 
     return (
-        <ToastContainer position="bottom-end" className="p-3">
+        <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 999 }}>
             {errorState.map((error, idx) => (
                 <ErrorToast error={error} key={idx} idx={idx} removeError={removeError} />
             ))}

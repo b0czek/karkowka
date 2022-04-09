@@ -54,9 +54,7 @@ export const QuestionListCard = (props: QuestionListCardProps) => {
                 <Card.Text>
                     Questions count: {props.questionList.questions?.length ?? props.questionList.questions_count}
                 </Card.Text>
-                <Card.Text>
-                    Created at: {date.toLocaleDateString()} {date.toLocaleTimeString()}
-                </Card.Text>
+                <Card.Text>Created at: {date.toLocaleString()}</Card.Text>
                 {props.with_answers ? (
                     <QuestionsList
                         questions={props.questionList.questions!}

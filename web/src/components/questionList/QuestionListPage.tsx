@@ -4,6 +4,7 @@ import { Navigate, useParams } from "react-router-dom";
 import { QuestionObject } from "../../api/question";
 import { QuestionList, QuestionListObject } from "../../api/question/list";
 import { Questions } from "../../api/question/questions";
+import { errorAdd } from "../../errorContext";
 import { Page } from "../Page";
 import { QuestionListCard } from "./QuestionListCard";
 
@@ -45,6 +46,10 @@ export const QuestionListPage = () => {
     const pasteHandler = async (e: React.ClipboardEvent) => {
         let clipboardData: string = e.clipboardData.getData("text/plain");
         if (!clipboardData) {
+            errorAdd({
+                message: "Clipboard empty!",
+                type: "warning",
+            });
             console.log("clipboard data empty");
             return;
         }
@@ -60,6 +65,10 @@ export const QuestionListPage = () => {
             .filter((el) => el !== null) as [string, string[]][];
 
         if (questions.length === 0) {
+            errorAdd({
+                message: "Could not find questions in pasted text!",
+                type: "warning",
+            });
             return;
         }
 
