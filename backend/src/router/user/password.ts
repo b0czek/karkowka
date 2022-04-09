@@ -11,10 +11,10 @@ import { Config } from "../../config";
 export const userPasswordRouterCreate = () => {
     const router = express.Router();
 
-    router.post(
+    router.patch(
         "/",
         ExpressSession.verifyLoggedIn,
-        checkSchema(passwordPostSchema),
+        checkSchema(passwordPostSchema, ["body"]),
         rejectIfBadRequest,
         async (req: Request, res: Response) => {
             let body: PasswordPostBody = req.body;

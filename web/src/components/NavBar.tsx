@@ -46,6 +46,9 @@ export const NavBar = () => {
                 <Nav>
                     {loginState.user ? (
                         <NavDropdown title={loginState.user.name}>
+                            <NavDropdown.Item as={Link} to="/changePassword" eventKey={9999}>
+                                Change password
+                            </NavDropdown.Item>
                             <NavDropdown.Item onClick={() => Session.logout()}>Log out</NavDropdown.Item>
                         </NavDropdown>
                     ) : null}
