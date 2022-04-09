@@ -1,5 +1,6 @@
 import { LoginState } from "../loginContext";
 import Cookie from "js-cookie";
+import { errorAdd } from "../errorContext";
 
 export interface ResponseBase {
     error: boolean;
@@ -10,6 +11,8 @@ export interface FetchBody {
 }
 
 const isDev = () => !process.env.NODE_ENV || process.env.NODE_ENV === "development";
+
+export type WrappedMethod<F extends (body: B) => Promise<R>, R extends ResponseBase, B extends FetchBody | string> = F;
 
 export class ApiProvider {
     protected static path: string = "/";
@@ -35,10 +38,6 @@ export class ApiProvider {
                     url.search = new URLSearchParams(body).toString();
                 }
 
-                if (isDev()) {
-                    console.log(url);
-                }
-
                 let req = await fetch(url.href, {
                     method: method.toUpperCase(),
                     headers:
@@ -62,4 +61,31 @@ export class ApiProvider {
             }
         });
     }
+
+    public static handleRequest = async <F extends (body: B) => Promise<R>, R extends ResponseBase, B extends FetchBody | string>(
+        method: WrappedMethod<F, R, B>,
+        body: B
+    ): Promise<Awaited<ReturnType<F>> | string> => {
+        return new Promise<Awaited<ReturnType<F>> | string>(async (resolve) => {
+            let message = "";
+            try {
+                let response = await method(body);
+
+                if (response.error) {
+                    message = response.message!;
+                } else {
+                    return resolve(response as any as Awaited<ReturnType<F>>);
+                }
+            } catch (err: any) {
+                message = err.message;
+            }
+
+            errorAdd({
+                message,
+                type: "error",
+            });
+
+            return resolve(message);
+        });
+    };
 }

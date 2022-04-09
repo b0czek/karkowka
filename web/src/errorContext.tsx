@@ -3,6 +3,7 @@ import { FetchBody, ResponseBase } from "./api/provider";
 
 export interface ErrorElement {
     message: string;
+    type: "warning" | "error";
 }
 
 export type ErrorState = Array<ErrorElement>;
@@ -29,40 +30,9 @@ export const ErrorStateProvider = (props: ErrorStateProviderProps) => {
     );
 };
 
-export type WrappedMethod<F extends (body: B) => Promise<R>, R extends ResponseBase, B extends FetchBody | string> = F;
-
-export const handleRequestErrorWrapper = async <
-    F extends (body: B) => Promise<R>,
-    R extends ResponseBase,
-    B extends FetchBody | string
->(
-    method: WrappedMethod<F, R, B>,
-    body: B
-): Promise<Awaited<ReturnType<F>> | string> => {
-    return new Promise<Awaited<ReturnType<F>> | string>(async (resolve) => {
-        let message = "";
-        try {
-            let response = await method(body);
-
-            if (response.error) {
-                message = response.message!;
-            } else {
-                return resolve(response as any as Awaited<ReturnType<F>>);
-            }
-        } catch (err: any) {
-            message = err.message;
-        }
-
-        const [state, dispatch] = errorState!;
-        dispatch([
-            ...state,
-            {
-                message,
-            },
-        ]);
-
-        return resolve(message);
-    });
+export const errorAdd = (error: ErrorElement) => {
+    const [state, dispatch] = errorState!;
+    dispatch([...state, error]);
 };
 
 interface ErrorStateProviderProps {

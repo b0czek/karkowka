@@ -4,7 +4,6 @@ import { Navigate, useParams } from "react-router-dom";
 import { QuestionObject } from "../../api/question";
 import { QuestionList, QuestionListObject } from "../../api/question/list";
 import { Questions } from "../../api/question/questions";
-import { handleRequestErrorWrapper } from "../../errorContext";
 import { Page } from "../Page";
 import { QuestionListCard } from "./QuestionListCard";
 
@@ -33,28 +32,38 @@ const handleQuestionAnswerInput = (input: string): [string, string[]] | null => 
 };
 
 export const QuestionListPage = () => {
-    const [questionList, setQuestionList] = React.useState<QuestionListObject | null>(null);
+    const [questionList, _setQuestionList] = React.useState<QuestionListObject | null>(null);
+    const messagesRef = React.useRef(questionList);
+    const setQuestionList = (newState: QuestionListObject) => {
+        messagesRef.current = newState;
+        _setQuestionList(newState);
+    };
+
     const [wasDeleted, setWasDeleted] = React.useState(false);
     const params = useParams();
 
     const pasteHandler = async (e: React.ClipboardEvent) => {
         let clipboardData: string = e.clipboardData.getData("text/plain");
-        if (!clipboardData || !questionList) {
-            console.log("asdasdsa");
+        if (!clipboardData) {
+            console.log("clipboard data empty");
             return;
         }
+        let questionList = messagesRef.current;
+        if (questionList === null) {
+            console.log("no question list");
+            return;
+        }
+
         let questions = clipboardData
             .split(/\r?\n/)
             .map((el) => handleQuestionAnswerInput(el))
             .filter((el) => el !== null) as [string, string[]][];
 
-        console.log(questions);
-
         if (questions.length === 0) {
             return;
         }
 
-        let res = await handleRequestErrorWrapper(Questions.create, {
+        let res = await Questions.handleRequest(Questions.create, {
             question_list_uuid: questionList.uuid,
             questions: questions.map(([question, answers]) => ({ question, answers })),
         });
@@ -66,7 +75,7 @@ export const QuestionListPage = () => {
     };
 
     const updateQuestionList = (uuid: string) => {
-        handleRequestErrorWrapper(QuestionList.get, uuid).then((list) => {
+        QuestionList.handleRequest(QuestionList.get, uuid).then((list) => {
             if (typeof list === "string") {
                 return;
             }
@@ -81,7 +90,7 @@ export const QuestionListPage = () => {
         updateQuestionList(uuid);
 
         // @ts-ignore
-        window.addEventListener("paste", pasteHandler);
+        window.addEventListener("paste", (e) => pasteHandler(e));
 
         return () => {
             // @ts-ignore

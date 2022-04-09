@@ -11,7 +11,7 @@ interface ErrorToastProps {
 const ErrorToast = (props: ErrorToastProps) => {
     return (
         <Toast onClose={() => props.removeError(props.idx)}>
-            <Toast.Header style={{ color: "#fff", backgroundColor: "#dc3545" }}>
+            <Toast.Header style={{ color: "#fff", backgroundColor: props.error.type === "error" ? "#dc3545" : "#ffc107" }}>
                 <strong className="me-auto">Error</strong>
             </Toast.Header>
             <Toast.Body>{props.error.message}</Toast.Body>

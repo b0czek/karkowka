@@ -13,6 +13,10 @@ const navLinks: NavLink[] = [
         path: "/questionLists",
         name: "Question Lists",
     },
+    {
+        path: "/exams",
+        name: "Exams",
+    },
 ];
 
 export const NavBar = () => {

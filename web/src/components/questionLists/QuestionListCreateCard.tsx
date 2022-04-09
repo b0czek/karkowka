@@ -3,14 +3,13 @@ import { Button, Card, FormControl, InputGroup } from "react-bootstrap";
 import { BsPlus } from "react-icons/bs";
 import { Navigate } from "react-router-dom";
 import { QuestionList } from "../../api/question/list";
-import { handleRequestErrorWrapper } from "../../errorContext";
 
 export const QuestionListCreateCard = () => {
     const [questionListName, setQuestionListName] = React.useState("");
     const [questionListUuid, setQuestionListUuid] = React.useState<string | null>(null);
 
     const createList = async () => {
-        let response = await handleRequestErrorWrapper(QuestionList.create, {
+        let response = await QuestionList.handleRequest(QuestionList.create, {
             name: questionListName,
             questions: [],
         });

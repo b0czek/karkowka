@@ -20,7 +20,7 @@ export const examsRouterCreate = () => {
             );
             return res.json({
                 error: false,
-                exams: exams.map((exam) => exam.uuid),
+                exams_uuids: exams.map((exam) => exam.uuid),
             });
         } catch (err) {
             return AppRouter.internalServerError(res);

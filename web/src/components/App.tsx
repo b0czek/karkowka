@@ -8,6 +8,7 @@ import { QuestionListsPage } from "./questionLists/QuestionListsPage";
 import { QuestionListPage } from "./questionList/QuestionListPage";
 import { NotFound } from "./NotFound";
 import { ErrorDisplay } from "./ErrorDisplay";
+import { ExamsPage } from "./exams/ExamsPage";
 
 const AuthRoute = (props: { [key: string]: any; children: JSX.Element }) => {
     const [loginState, _] = useLoginState();
@@ -51,6 +52,15 @@ const App = () => {
                         </AuthRoute>
                     }
                 />
+                <Route
+                    path="exams"
+                    element={
+                        <AuthRoute>
+                            <ExamsPage />
+                        </AuthRoute>
+                    }
+                />
+
                 <Route
                     path="*"
                     element={

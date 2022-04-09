@@ -3,7 +3,6 @@ import { Button, Card, CloseButton, Col, Container, ListGroup, ListGroupItem, Ro
 import { Link, Navigate } from "react-router-dom";
 import { Question, QuestionObject } from "../../api/question";
 import { QuestionList, QuestionListObject } from "../../api/question/list";
-import { handleRequestErrorWrapper } from "../../errorContext";
 import { QuestionsList } from "./QuestionsList";
 
 export const QuestionListCard = (props: QuestionListCardProps) => {
@@ -22,7 +21,7 @@ export const QuestionListCard = (props: QuestionListCardProps) => {
     };
 
     const questionAdd = async () => {
-        let createResponse = await handleRequestErrorWrapper(Question.create, {
+        let createResponse = await Question.handleRequest(Question.create, {
             answers: ["Answer"],
             question: "Question",
             question_list_uuid: props.questionList.uuid,
@@ -31,7 +30,7 @@ export const QuestionListCard = (props: QuestionListCardProps) => {
             return;
         }
 
-        let question = await handleRequestErrorWrapper(Question.get, {
+        let question = await Question.handleRequest(Question.get, {
             question_list_uuid: props.questionList.uuid,
             question_uuid: createResponse.question_uuid,
         });

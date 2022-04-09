@@ -3,7 +3,7 @@ import { Button, Col, Form, FormControl, InputGroup, Row } from "react-bootstrap
 import { Question, QuestionObject } from "../../api/question";
 import { BsX, BsPlus, BsXLg, BsCheckLg } from "react-icons/bs";
 import { useParams } from "react-router-dom";
-import { handleRequestErrorWrapper } from "../../errorContext";
+
 const Answer = (props: AnswerProps) => {
     return (
         <InputGroup className="mb-1">
@@ -56,7 +56,7 @@ export const QuestionRow = (props: QuestionProps) => {
     const onAnswerAdd = () => dispatch({ wasEdited: true, answers: [...state.answers, ""] });
 
     const onQuestionSave = async () => {
-        let res = await handleRequestErrorWrapper(Question.edit, {
+        let res = await Question.handleRequest(Question.edit, {
             answers: state.answers,
             question: state.question,
             question_list_uuid: params.list_uuid!,
@@ -70,7 +70,7 @@ export const QuestionRow = (props: QuestionProps) => {
     };
 
     const onQuestionDelete = async () => {
-        let res = await handleRequestErrorWrapper(Question.delete, {
+        let res = await Question.handleRequest(Question.delete, {
             question_list_uuid: params.list_uuid!,
             question_uuid: props.question.uuid,
         });
