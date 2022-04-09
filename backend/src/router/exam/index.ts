@@ -10,6 +10,7 @@ import lodash from "lodash";
 import { examsRouterCreate } from "./exams";
 import { examParticipationRouterCreate } from "./participation";
 import { User } from "../../entities/User";
+import { examResultRouterCreate } from "./result";
 
 export const examObjectCreate = (exam: Exam) => {
     return {
@@ -31,6 +32,7 @@ export const examRouterCreate = () => {
 
     router.use("/exams", examsRouterCreate());
     router.use("/participation", examParticipationRouterCreate());
+    router.use("/result", examResultRouterCreate());
 
     router.get(
         "/",

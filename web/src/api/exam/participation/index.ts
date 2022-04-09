@@ -1,4 +1,5 @@
 import { ApiProvider, ResponseBase } from "../../provider";
+import { AnswerObject } from "./answer";
 
 export class ExamParticipation extends ApiProvider {
     protected static path = "/exam/participation";
@@ -14,10 +15,11 @@ interface ExamParticipationGetResponse extends ResponseBase {
     exam_participation: ExamParticipationObject;
 }
 
-interface ExamParticipationObject {
+export interface ExamParticipationObject {
     uuid: string;
     joined_at: string;
-    answers: string[];
+    finished_at: string | null;
+    answers: AnswerObject[];
     correct_answers_count: number;
     exam: string;
 }

@@ -7,13 +7,24 @@ import { checkSchema, Schema } from "express-validator";
 import { ExamParticipation } from "../../../entities/ExamParticipation";
 import { AppRouter } from "../..";
 import { examQuestionsRouterCreate } from "./questions";
-import { examAnswerRouterCreate } from "./answer";
+import { examAnswerObjectCreate, examAnswerRouterCreate } from "./answer";
 
-const examParticipationObjectCreate = (examParticipation: ExamParticipation) => {
+export const examParticipationFinishDate = (participation: ExamParticipation) => {
+    let finish_date = new Date(participation.joined_at!.valueOf() + participation.exam.duration * 1000);
+    let is_past_finish_date = finish_date.valueOf() < new Date().valueOf();
+
+    return participation.finished_at ?? (is_past_finish_date ? finish_date : null);
+};
+
+export const examParticipationIsFinished = (participation: ExamParticipation) => {
+    return examParticipationFinishDate(participation) !== null;
+};
+export const examParticipationObjectCreate = (examParticipation: ExamParticipation) => {
     return {
         uuid: examParticipation.uuid,
         joined_at: examParticipation.joined_at,
-        answers: examParticipation.answers.getItems().map((answer) => answer.uuid),
+        finished_at: examParticipationFinishDate(examParticipation),
+        answers: examParticipation.answers.getItems().map((answer) => examAnswerObjectCreate(answer)),
         correct_answers_count: examParticipation.answers.getItems().filter((answer) => answer.is_correct).length,
         exam: examParticipation.exam.uuid,
     };
@@ -46,7 +57,7 @@ export const examParticipationRouterCreate = () => {
                         uuid: body.participation_uuid,
                     },
                     {
-                        fields: ["uuid", "joined_at", "answers.uuid", "answers.is_correct", "exam"],
+                        populate: ["answers", "answers.question", "exam"],
                     }
                 );
                 if (!participation) {

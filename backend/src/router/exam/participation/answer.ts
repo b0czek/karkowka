@@ -9,7 +9,7 @@ import { ExpressSession } from "../../expressSession";
 import validators, { rejectIfBadRequest } from "../../validators";
 import { questionObjectCreate } from "./questions";
 
-const examAnswerObjectCreate = (answer: ExamAnswer) => {
+export const examAnswerObjectCreate = (answer: ExamAnswer) => {
     return {
         answered_at: answer.anwsered_at,
         answer: answer.anwser,

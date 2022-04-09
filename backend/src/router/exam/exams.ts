@@ -16,6 +16,9 @@ export const examsRouterCreate = () => {
                 },
                 {
                     fields: ["uuid"],
+                    orderBy: {
+                        started_at: "desc",
+                    },
                 }
             );
             return res.json({

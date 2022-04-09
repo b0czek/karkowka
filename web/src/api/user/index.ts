@@ -23,7 +23,7 @@ interface UserGetBody extends FetchBody {
 interface UserGetResponse extends ResponseBase {
     user: UserObject;
 }
-interface UserObject {
+export interface UserObject {
     uuid: string;
     created_at: string;
     username: string;

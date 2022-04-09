@@ -17,7 +17,7 @@ interface AnswerGetResponse extends ResponseBase {
     answer: AnswerObject;
 }
 
-interface AnswerObject {
+export interface AnswerObject {
     answered_at: string;
     answer: string;
     is_correct: boolean;
