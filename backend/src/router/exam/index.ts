@@ -85,6 +85,7 @@ export const examRouterCreate = () => {
                                 uuid: req.session.user_uuid,
                                 deleted: false,
                             },
+                            uuid: body.question_list_uuid,
                             deleted: false,
                         },
                         deleted: false,
