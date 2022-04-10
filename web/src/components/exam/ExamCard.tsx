@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Card, CloseButton } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Exam, ExamObject } from "../../api/exam";
+import { formatTime } from "../utilts";
 import { ExamParticipants } from "./ExamParticipants";
 import { ExamQuestions } from "./ExamQuestions";
 
@@ -16,13 +17,6 @@ const ExamCardDetailed = (props: ExamCardDetailedProps) => {
             <ExamQuestions questions={props.exam.questions} question_list_uuid={props.exam.question_list} />
         </>
     );
-};
-
-const formatTime = (seconds: number) => {
-    let hours = Math.floor(seconds / 60 / 60);
-    let minutes = Math.floor((seconds - hours * 3600) / 60);
-    let secs = Math.floor(seconds - hours * 3600 - minutes * 60);
-    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
 
 export const ExamCard = (props: ExamCardProps) => {

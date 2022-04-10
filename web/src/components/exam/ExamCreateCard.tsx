@@ -48,7 +48,7 @@ export const ExamCreateCard = () => {
         });
     }, []);
 
-    if (createdExamUuid != "") {
+    if (createdExamUuid !== "") {
         return <Navigate to={`/exam/${createdExamUuid}`} />;
     }
 
@@ -226,7 +226,7 @@ export const ExamCreateCard = () => {
                             <div className="border">
                                 <Form.Control
                                     style={{ border: "0px", borderBottom: "1px solid #ced4da" }}
-                                    placeholder="Participant name"
+                                    placeholder="Participant's username"
                                     onChange={participantsInputHandler}
                                     value={creationState.participantsInput}
                                 />

@@ -25,9 +25,9 @@ export const NavBar = () => {
 
     return location.pathname.startsWith("/login") ? null : (
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" className="px-3 py-2 mb-3">
-            <Link className="navbar-brand" to="/">
+            <Navbar.Brand as={Link} to="/">
                 Karkówka
-            </Link>
+            </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-bar" />
             <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-between">
                 <Nav className="mr-auto">

@@ -1,6 +1,6 @@
 import React from "react";
-import { Button, Card, CloseButton, Col, Container, ListGroup, ListGroupItem, Row } from "react-bootstrap";
-import { Link, Navigate } from "react-router-dom";
+import { Button, Card, CloseButton } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { Question, QuestionObject } from "../../api/question";
 import { QuestionList, QuestionListObject } from "../../api/question/list";
 import { QuestionsList } from "./QuestionsList";
