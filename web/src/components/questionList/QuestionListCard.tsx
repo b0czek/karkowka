@@ -9,7 +9,10 @@ export const QuestionListCard = (props: QuestionListCardProps) => {
     let date = new Date(props.questionList.created_at);
 
     const questionListDelete = async () => {
-        await QuestionList.delete(props.questionList.uuid);
+        let res = await Question.handleRequest(QuestionList.delete, props.questionList.uuid);
+        if (typeof res === "string") {
+            return;
+        }
         if (props.onDelete) props.onDelete(props.questionList.uuid);
     };
 
@@ -45,6 +48,21 @@ export const QuestionListCard = (props: QuestionListCardProps) => {
         }
     };
 
+    const questionSave = (oldUuid: string, newQuestion: QuestionObject) => {
+        let questionIdx = props.questionList.questions!.findIndex((question) => question.uuid === oldUuid);
+        console.log(questionIdx);
+        let newQuestions = [
+            ...props.questionList.questions!.slice(0, questionIdx),
+            newQuestion,
+            ...props.questionList.questions!.slice(questionIdx + 1),
+        ];
+        if (props.onQuestionAlter) {
+            // let newQuestions = props.questionList.questions!.splice(questionIdx, 1, newQuestion);
+            console.log(newQuestions);
+            props.onQuestionAlter(newQuestions);
+        }
+    };
+
     return (
         <Card className={props.className}>
             <Card.Header>
@@ -60,6 +78,7 @@ export const QuestionListCard = (props: QuestionListCardProps) => {
                         questions={props.questionList.questions!}
                         deleteQuestion={questionDelete}
                         addQuestion={questionAdd}
+                        saveQuestion={questionSave}
                     />
                 ) : (
                     <Link to={`/questionList/${props.questionList.uuid}`}>

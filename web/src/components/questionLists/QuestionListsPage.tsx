@@ -27,6 +27,7 @@ export const QuestionListsPage = () => {
         <Page>
             <Col xs={11} sm={11} md={10} lg={10} xl={10}>
                 <QuestionListCreateCard />
+                <hr />
                 {lists
                     .filter((list) => !list.deleted)
                     .map((list, idx) => (

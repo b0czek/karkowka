@@ -8,7 +8,8 @@ export const QuestionListCreateCard = () => {
     const [questionListName, setQuestionListName] = React.useState("");
     const [questionListUuid, setQuestionListUuid] = React.useState<string | null>(null);
 
-    const createList = async () => {
+    const createList = async (e: React.FormEvent) => {
+        e.preventDefault();
         let response = await QuestionList.handleRequest(QuestionList.create, {
             name: questionListName,
             questions: [],
@@ -34,9 +35,10 @@ export const QuestionListCreateCard = () => {
                         placeholder="Question list name"
                         value={questionListName}
                         onChange={(e) => setQuestionListName(e.target.value)}
+                        required
                     />
 
-                    <Button className="float-end" onClick={createList}>
+                    <Button className="float-end" type="submit" onClick={createList}>
                         Create new list <BsPlus />
                     </Button>
                 </InputGroup>

@@ -44,6 +44,12 @@ export const QuestionListPage = () => {
     const params = useParams();
 
     const pasteHandler = async (e: React.ClipboardEvent) => {
+        let questionList = messagesRef.current;
+        if (questionList === null) {
+            console.log("no question list");
+            return;
+        }
+
         let clipboardData: string = e.clipboardData.getData("text/plain");
         if (!clipboardData) {
             errorAdd({
@@ -51,11 +57,6 @@ export const QuestionListPage = () => {
                 type: "warning",
             });
             console.log("clipboard data empty");
-            return;
-        }
-        let questionList = messagesRef.current;
-        if (questionList === null) {
-            console.log("no question list");
             return;
         }
 
@@ -97,6 +98,9 @@ export const QuestionListPage = () => {
         if (!uuid) return;
 
         updateQuestionList(uuid);
+
+        // @ts-ignore
+        window.removeEventListener("paste", pasteHandler);
 
         // @ts-ignore
         window.addEventListener("paste", (e) => pasteHandler(e));

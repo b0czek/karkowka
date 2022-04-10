@@ -65,6 +65,13 @@ export const QuestionRow = (props: QuestionProps) => {
         if (typeof res === "string") {
             return;
         }
+        props.onSave(props.question.uuid, {
+            answers: state.answers,
+            created_at: props.question.created_at,
+            deleted: false,
+            question: state.question,
+            uuid: res.new_question_uuid,
+        });
 
         dispatch({ wasEdited: false });
     };
@@ -115,6 +122,7 @@ interface QuestionProps {
     question: QuestionObject;
     idx: number;
     onDelete: (idx: number) => void;
+    onSave: (oldUuid: string, newQuestion: QuestionObject) => void;
 }
 interface QuestionState {
     question: string;

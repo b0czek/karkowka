@@ -7,14 +7,15 @@ interface QuestionsProps {
     questions: QuestionObject[];
     deleteQuestion: (questionIdx: number) => void;
     addQuestion: () => void;
+    saveQuestion: (oldUuid: string, newQuestion: QuestionObject) => void;
 }
 
-export const QuestionsList = ({ questions, deleteQuestion, addQuestion }: QuestionsProps) => {
+export const QuestionsList = ({ questions, deleteQuestion, addQuestion, saveQuestion }: QuestionsProps) => {
     return (
         <ListGroup>
             {questions.map((question, idx) => (
                 <ListGroup.Item key={idx}>
-                    <QuestionRow question={question} key={idx} idx={idx} onDelete={deleteQuestion} />
+                    <QuestionRow question={question} key={idx} idx={idx} onDelete={deleteQuestion} onSave={saveQuestion} />
                 </ListGroup.Item>
             ))}
             <Button variant="primary" className="w-100 mt-2" onClick={addQuestion}>
