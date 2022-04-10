@@ -6,12 +6,19 @@ import { Exam } from "../../entities/Exam";
 import { AppRouter } from "..";
 import { ExpressSession } from "../expressSession";
 
-const userParticipatedExamObjectCreate = (exam: Exam, exam_participations: ExamParticipation[] | undefined) => {
+export const userParticipatedExamObjectCreate = (exam: Exam, exam_participations: ExamParticipation[] | undefined) => {
     let participation = exam_participations
         ? exam_participations.find((participation) => participation.exam.uuid === exam.uuid)
         : undefined;
     return {
         uuid: exam.uuid,
+        name: exam.name,
+        created_at: exam.created_at,
+        started_at: exam.started_at,
+        time_to_join: exam.time_to_join,
+        duration: exam.duration,
+        questions_count: exam.questions_count,
+        hosted_by: exam.hosted_by.uuid,
         joined: participation !== undefined,
         participation_uuid: participation?.uuid ?? null,
     };
@@ -29,12 +36,20 @@ export const userParticipatedExamsRouterCreate = () => {
                     deleted: false,
                 },
                 {
-                    fields: ["participated_exams.uuid", "exam_participations.exam"],
+                    populate: ["exam_participations.exam"],
                 }
             );
             if (!user) {
                 return AppRouter.notFound(res);
             }
+
+            await user.participated_exams.init({
+                orderBy: {
+                    started_at: "DESC",
+                },
+                populate: ["hosted_by"],
+            });
+
             return res.json({
                 error: false,
                 exams: user.participated_exams

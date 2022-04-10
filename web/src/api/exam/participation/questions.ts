@@ -1,7 +1,7 @@
 import { ApiProvider, ResponseBase } from "../../provider";
 
 export class ExamParticipationQuestions extends ApiProvider {
-    protected static path = "/exam/participation/answer";
+    protected static path = "/exam/participation/questions";
 
     public static get = async (participation_uuid: string): Promise<ExamQuestionsResponse> =>
         this._fetch("get", { participation_uuid });

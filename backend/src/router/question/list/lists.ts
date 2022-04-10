@@ -14,6 +14,7 @@ export const questionListsRouterCreate = () => {
                 QuestionList,
                 {
                     owned_by: req.session.user_uuid,
+                    deleted: false,
                 },
                 {
                     populate: ["questions"],

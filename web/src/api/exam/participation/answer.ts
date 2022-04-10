@@ -18,6 +18,7 @@ interface AnswerGetResponse extends ResponseBase {
 }
 
 export interface AnswerObject {
+    uuid: string;
     answered_at: string;
     answer: string;
     is_correct: boolean;

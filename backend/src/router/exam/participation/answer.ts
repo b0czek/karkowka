@@ -11,6 +11,7 @@ import { questionObjectCreate } from "./questions";
 
 export const examAnswerObjectCreate = (answer: ExamAnswer) => {
     return {
+        uuid: answer.uuid,
         answered_at: answer.anwsered_at,
         answer: answer.anwser,
         is_correct: answer.is_correct,

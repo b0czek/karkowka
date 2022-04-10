@@ -9,8 +9,8 @@ import { AppRouter } from "..";
 import { Config } from "../../config";
 import { ExpressSession } from "../expressSession";
 import { userSearchRouterCreate } from "./search";
-import { userParticipatedExamsRouterCreate } from "./participatedExams";
 import { userPasswordRouterCreate } from "./password";
+import { userParticipatedExamRouterCreate } from "./participatedExam";
 
 export const userObjectCreate = (user: User) => {
     return {
@@ -26,7 +26,7 @@ export const userRouterCreate = () => {
     const router = express.Router();
 
     router.use("/search", userSearchRouterCreate());
-    router.use("/participated_exams", userParticipatedExamsRouterCreate());
+    router.use("/participated_exam", userParticipatedExamRouterCreate());
     router.use("/password", userPasswordRouterCreate());
 
     router.get(

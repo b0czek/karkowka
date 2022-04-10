@@ -160,11 +160,11 @@ export const examRouterCreate = () => {
                     }
                 );
                 if (!e) {
-                    return AppRouter.notFound(res);
+                    return AppRouter.notFound(res, "could not find exam");
                 }
                 exam = e;
             } catch (err) {
-                return AppRouter.internalServerError(res);
+                return AppRouter.internalServerError(res, "could not get exam data");
             }
 
             // check if question list should be removed
@@ -194,7 +194,8 @@ export const examRouterCreate = () => {
             try {
                 await Database.orm.em.flush();
             } catch (err) {
-                return AppRouter.internalServerError(res);
+                console.log(err);
+                return AppRouter.internalServerError(res, "could not persist deletion");
             }
 
             return res.json({
