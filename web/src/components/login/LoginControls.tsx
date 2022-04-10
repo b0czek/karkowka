@@ -39,11 +39,17 @@ export class LoginControls extends React.Component {
                 {this.state.errorMessage.length === 0 ? null : <this.LoginAlert />}
                 <Form.Group className="mb-3">
                     <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" name="username" value={this.state.username} onChange={this.handleChange} />
+                    <Form.Control type="text" name="username" value={this.state.username} onChange={this.handleChange} required />
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+                    <Form.Control
+                        type="password"
+                        name="password"
+                        value={this.state.password}
+                        onChange={this.handleChange}
+                        required
+                    />
                 </Form.Group>
                 <Button variant="primary" type="submit" className="w-100" onClick={this.handleLogin}>
                     Login

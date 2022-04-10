@@ -20,7 +20,9 @@ export class ChangePasswordPage extends React.Component {
 
     RegistrationAlert = () => <Alert variant="success">Password changed successfully</Alert>;
 
-    changePassword = async () => {
+    changePassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+
         this.setState({ wasChanged: false });
         if (this.state.newPassword !== this.state.newPasswordConfirm) {
             errorAdd({
@@ -53,6 +55,7 @@ export class ChangePasswordPage extends React.Component {
                             name="oldPassword"
                             value={this.state.oldPassword}
                             onChange={this.onChange}
+                            required
                         />
                         <Form.Control
                             type="password"
@@ -61,6 +64,7 @@ export class ChangePasswordPage extends React.Component {
                             name="newPassword"
                             value={this.state.newPassword}
                             onChange={this.onChange}
+                            required
                         />
                         <Form.Control
                             type="password"
@@ -69,8 +73,9 @@ export class ChangePasswordPage extends React.Component {
                             name="newPasswordConfirm"
                             value={this.state.newPasswordConfirm}
                             onChange={this.onChange}
+                            required
                         />
-                        <Button style={{ width: "100%" }} onClick={this.changePassword}>
+                        <Button style={{ width: "100%" }} onClick={this.changePassword} type="submit">
                             Change password
                         </Button>
                     </Form>

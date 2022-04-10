@@ -55,15 +55,21 @@ export class RegisterControls extends React.Component {
                 {this.state.message.length > 0 ? <this.RegistrationAlert /> : null}
                 <Form.Group className="mb-3">
                     <Form.Label>Name</Form.Label>
-                    <Form.Control type="text" value={this.state.name} name="name" onChange={this.handleChange} />
+                    <Form.Control type="text" value={this.state.name} name="name" onChange={this.handleChange} required />
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" value={this.state.username} name="username" onChange={this.handleChange} />
+                    <Form.Control type="text" value={this.state.username} name="username" onChange={this.handleChange} required />
                 </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" value={this.state.password} name="password" onChange={this.handleChange} />
+                    <Form.Control
+                        type="password"
+                        value={this.state.password}
+                        name="password"
+                        onChange={this.handleChange}
+                        required
+                    />
                 </Form.Group>
                 <Button variant="primary" type="submit" className="w-100" onClick={this.handleRegistration}>
                     Register
