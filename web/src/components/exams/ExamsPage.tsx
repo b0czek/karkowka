@@ -4,6 +4,7 @@ import { Exam, ExamObject } from "../../api/exam";
 import { Exams } from "../../api/exam/exams";
 import { Page } from "../Page";
 import { ExamCard } from "../exam/ExamCard";
+import { ExamCreateCard } from "../exam/ExamCreateCard";
 
 export const ExamsPage = () => {
     const [exams, setExams] = React.useState<ExamObject[]>([]);
@@ -22,11 +23,17 @@ export const ExamsPage = () => {
         });
     }, []);
 
+    const onExamDelete = (exam_uuid: string) => {
+        setExams(exams.filter((exam) => exam.uuid !== exam_uuid));
+    };
+
     return (
         <Page>
             <Col xs={11} sm={11} md={10} lg={10} xl={10}>
+                <ExamCreateCard />
+                <hr />
                 {exams.map((exam, idx) => (
-                    <ExamCard key={idx} exam={exam} className="mb-3" />
+                    <ExamCard key={idx} exam={exam} className="mb-3" onDelete={onExamDelete} />
                 ))}
             </Col>
         </Page>

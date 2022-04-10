@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Card } from "react-bootstrap";
+import { Button, Card, CloseButton } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { ExamObject } from "../../api/exam";
+import { Exam, ExamObject } from "../../api/exam";
 import { ExamParticipants } from "./ExamParticipants";
 import { ExamQuestions } from "./ExamQuestions";
 
@@ -18,13 +18,30 @@ const ExamCardDetailed = (props: ExamCardDetailedProps) => {
     );
 };
 
+const formatTime = (seconds: number) => {
+    let hours = Math.floor(seconds / 60 / 60);
+    let minutes = Math.floor((seconds - hours * 3600) / 60);
+    let secs = Math.floor(seconds - hours * 3600 - minutes * 60);
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+};
+
 export const ExamCard = (props: ExamCardProps) => {
     let createdAt = new Date(props.exam.created_at);
     let startedAt = new Date(props.exam.started_at);
 
+    const onDelete = async () => {
+        let res = await Exam.handleRequest(Exam.delete, props.exam.uuid);
+        if (typeof res === "string") {
+            return;
+        }
+        if (props.onDelete) props.onDelete(props.exam.uuid);
+    };
+
     return (
         <Card className={props.className}>
-            <Card.Header>{props.exam.name}</Card.Header>
+            <Card.Header>
+                {props.exam.name} <CloseButton className="float-end" onClick={onDelete} />
+            </Card.Header>
             <Card.Body>
                 <Card.Text>
                     Started at: <b>{startedAt.toLocaleString()}</b>
@@ -33,10 +50,10 @@ export const ExamCard = (props: ExamCardProps) => {
                     Created at: <b>{createdAt.toLocaleString()}</b>
                 </Card.Text>
                 <Card.Text>
-                    Duration: <b>{props.exam.duration} seconds</b>
+                    Duration: <b>{formatTime(props.exam.duration)}</b>
                 </Card.Text>
                 <Card.Text>
-                    Time to join: <b>{props.exam.time_to_join} seconds</b>
+                    Time to join: <b>{formatTime(props.exam.time_to_join)}</b>
                 </Card.Text>
                 <Card.Text>
                     Questions count: <b>{props.exam.questions_count}</b>
@@ -62,4 +79,5 @@ export interface ExamCardProps {
     exam: ExamObject;
     detailed?: true;
     className?: string;
+    onDelete?: (exam_uuid: string) => void;
 }

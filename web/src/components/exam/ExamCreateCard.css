@@ -1,0 +1,13 @@
+select:required:invalid {
+    color: gray;
+}
+option[value=""][disabled] {
+    display: none;
+}
+option {
+    color: black;
+}
+
+.space-children > * + * {
+    margin-top: 12px;
+}
