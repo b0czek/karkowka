@@ -12,6 +12,10 @@ import { ExamsPage } from "./exams/ExamsPage";
 import { ExamPage } from "./exam/ExamPage";
 import { ExamResultPage } from "./exam/ExamResultPage";
 import { ChangePasswordPage } from "./ChangePasswordPage";
+import { ParticipatedExamsPage } from "./participatedExams/ParticipatedExamsPage";
+import { JoinExamPage } from "./participateExam/JoinExamPage";
+import { ParticipateExamPage } from "./participateExam/ParticipateExamPage";
+import { ParticipatedExamResultPage } from "./participatedExams/ParticipatedExamResultPage";
 
 const AuthRoute = (props: { [key: string]: any; children: JSX.Element }) => {
     const [loginState, _] = useLoginState();
@@ -35,7 +39,7 @@ const App = () => {
                     path="/"
                     element={
                         <AuthRoute>
-                            <></>
+                            <ParticipatedExamsPage />
                         </AuthRoute>
                     }
                 />
@@ -85,6 +89,33 @@ const App = () => {
                     element={
                         <AuthRoute>
                             <ChangePasswordPage />
+                        </AuthRoute>
+                    }
+                />
+
+                <Route
+                    path="join/:exam_uuid"
+                    element={
+                        <AuthRoute>
+                            <JoinExamPage />
+                        </AuthRoute>
+                    }
+                />
+
+                <Route
+                    path="participate/:participation_uuid"
+                    element={
+                        <AuthRoute>
+                            <ParticipateExamPage />
+                        </AuthRoute>
+                    }
+                />
+
+                <Route
+                    path="result/:participation_uuid"
+                    element={
+                        <AuthRoute>
+                            <ParticipatedExamResultPage />
                         </AuthRoute>
                     }
                 />
