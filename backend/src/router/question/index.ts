@@ -159,6 +159,7 @@ export const questionRouterCreate = () => {
                             uuid: body.question_list_uuid,
                             owned_by: req.session.user_uuid,
                         },
+                        deleted: false,
                     },
                     {
                         fields: ["utilized_in.uuid"],

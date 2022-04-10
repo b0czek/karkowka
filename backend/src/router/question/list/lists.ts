@@ -16,7 +16,7 @@ export const questionListsRouterCreate = () => {
                     owned_by: req.session.user_uuid,
                 },
                 {
-                    populate: ["questions.answers"],
+                    populate: ["questions"],
                     orderBy: {
                         created_at: "desc",
                     },
@@ -24,7 +24,7 @@ export const questionListsRouterCreate = () => {
             );
             return res.json({
                 error: false,
-                question_lists: question_lists.map((list) => questionListObjectCreate(list)),
+                question_lists: question_lists.map((list) => questionListObjectCreate(list, false, false)),
             });
         } catch (err) {
             return AppRouter.internalServerError(res, "could not fetch question lists");

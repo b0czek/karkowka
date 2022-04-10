@@ -33,7 +33,7 @@ interface ExamCreateBody {
     duration: number;
     questions_count: number;
     question_list_uuid: string;
-    participants: string[];
+    participants_uuids: string[];
 }
 
 interface ExamCreateResponse extends ResponseBase {

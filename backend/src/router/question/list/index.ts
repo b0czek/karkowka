@@ -9,14 +9,21 @@ import { questionArraySchema, QuestionBody, questionObjectCreate } from "../ques
 import { questionListsRouterCreate } from "./lists";
 import { questionListUuidSchema } from "..";
 
-export const questionListObjectCreate = (questionList: QuestionList, withQuestions: boolean = false) => {
-    let questions = withQuestions ? questionList.questions.getItems().map(questionObjectCreate) : undefined;
+export const questionListObjectCreate = (
+    questionList: QuestionList,
+    withDeletedQuestions: boolean = false,
+    withQuestions: boolean = false
+) => {
+    let questionsObjects = questionList.questions
+        .getItems()
+        .filter((question) => (withDeletedQuestions ? true : !question.deleted));
+    let questions = withQuestions ? questionsObjects.map(questionObjectCreate) : undefined;
     return {
         uuid: questionList.uuid,
         created_at: questionList.created_at,
         name: questionList.name,
         questions: questions,
-        questions_count: questionList.questions.length,
+        questions_count: questionsObjects.length,
         deleted: questionList.deleted,
     };
 };
@@ -42,15 +49,7 @@ export const questionListRouterCreate = () => {
                         owned_by: req.session.user_uuid,
                     },
                     {
-                        fields: [
-                            "created_at",
-                            "name",
-                            "questions.question",
-                            "questions.answers",
-                            "questions.uuid",
-                            "questions.deleted",
-                            "uuid",
-                        ],
+                        fields: ["created_at", "name", "uuid"],
                         orderBy: {},
                     }
                 );
@@ -58,9 +57,15 @@ export const questionListRouterCreate = () => {
                     return AppRouter.notFound(res);
                 }
 
+                await question_list.questions.init({
+                    where: {
+                        deleted: false,
+                    },
+                });
+
                 return res.json({
                     error: false,
-                    question_list: questionListObjectCreate(question_list, true),
+                    question_list: questionListObjectCreate(question_list, false, true),
                 });
             } catch (err) {
                 return AppRouter.internalServerError(res, "could not fetch database");
@@ -115,7 +120,7 @@ export const questionListRouterCreate = () => {
                         deleted: false,
                     },
                     {
-                        fields: ["utilized_in.uuid"],
+                        fields: ["utilized_in.uuid", "questions"],
                     }
                 );
                 if (!list) {

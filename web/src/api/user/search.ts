@@ -1,3 +1,4 @@
+import { UserObject } from ".";
 import { ApiProvider, ResponseBase } from "../provider";
 
 export class UserSearch extends ApiProvider {
@@ -6,5 +7,5 @@ export class UserSearch extends ApiProvider {
 }
 
 interface UserSearchResponse extends ResponseBase {
-    user_uuid: string;
+    user: UserObject;
 }

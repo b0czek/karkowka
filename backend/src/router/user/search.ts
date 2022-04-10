@@ -5,6 +5,7 @@ import { User } from "../../entities/User";
 import { AppRouter } from "..";
 import { ExpressSession } from "../expressSession";
 import validators, { rejectIfBadRequest } from "../validators";
+import { userObjectCreate } from ".";
 
 export const userSearchRouterCreate = () => {
     const router = express.Router();
@@ -18,22 +19,16 @@ export const userSearchRouterCreate = () => {
             let body: UserSearchBody = (<any>req.query) as UserSearchBody;
 
             try {
-                let user = await Database.orm.em.findOne(
-                    User,
-                    {
-                        username: body.username,
-                        deleted: false,
-                    },
-                    {
-                        fields: ["uuid"],
-                    }
-                );
+                let user = await Database.orm.em.findOne(User, {
+                    username: body.username,
+                    deleted: false,
+                });
                 if (!user) {
-                    return AppRouter.notFound(res);
+                    return AppRouter.notFound(res, `user with username ${body.username} does not exist`);
                 }
                 return res.json({
                     error: false,
-                    user_uuid: user.uuid,
+                    user: userObjectCreate(user),
                 });
             } catch (err) {
                 return AppRouter.internalServerError(res);

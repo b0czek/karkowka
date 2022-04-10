@@ -149,7 +149,14 @@ export const examRouterCreate = () => {
                         hosted_by: req.session.user_uuid,
                     },
                     {
-                        fields: ["question_list.utilized_in", "participants", "participants.participated_exams"],
+                        fields: [
+                            "question_list.utilized_in",
+                            "participants",
+                            "participants.participated_exams",
+                            "participations",
+                            "participations.answers",
+                            "participations.participant",
+                        ],
                     }
                 );
                 if (!e) {
