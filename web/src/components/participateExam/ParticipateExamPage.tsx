@@ -7,6 +7,7 @@ import { ExamParticipationQuestions, ExamQuestionObject } from "../../api/exam/p
 import { Page } from "../Page";
 import { AnswerProgressBar } from "./AnswerProgressBar";
 import { QuestionPrompt } from "./QuestionPrompt";
+import { TimeLeft } from "./TimeLeft";
 
 export const ParticipateExamPage = () => {
     const [participation, setParticipation] = React.useState<ExamParticipationObject | null>(null);
@@ -77,6 +78,7 @@ export const ParticipateExamPage = () => {
         <Page>
             <Col xs={11} sm={11} md={10} lg={10} xl={10}>
                 <AnswerProgressBar participation={participation} questionsCount={questionsCount} />
+                <TimeLeft participation={participation} onTimesUp={() => setShouldRedirect(true)} />
                 <QuestionPrompt
                     onSubmit={onQuestionSubmit}
                     question={questions[0]}

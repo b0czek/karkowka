@@ -34,9 +34,9 @@ const handleQuestionAnswerInput = (input: string): [string, string[]] | null => 
 
 export const QuestionListPage = () => {
     const [questionList, _setQuestionList] = React.useState<QuestionListObject | null>(null);
-    const messagesRef = React.useRef(questionList);
+    const questionListRef = React.useRef(questionList);
     const setQuestionList = (newState: QuestionListObject) => {
-        messagesRef.current = newState;
+        questionListRef.current = newState;
         _setQuestionList(newState);
     };
 
@@ -44,7 +44,7 @@ export const QuestionListPage = () => {
     const params = useParams();
 
     const pasteHandler = async (e: React.ClipboardEvent) => {
-        let questionList = messagesRef.current;
+        let questionList = questionListRef.current;
         if (questionList === null) {
             console.log("no question list");
             return;
