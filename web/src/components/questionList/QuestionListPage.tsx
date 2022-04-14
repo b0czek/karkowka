@@ -44,6 +44,14 @@ export const QuestionListPage = () => {
     const params = useParams();
 
     const pasteHandler = async (e: React.ClipboardEvent) => {
+        // don't handle paste if it was in form control
+        if (
+            e.target instanceof HTMLInputElement ||
+            e.target instanceof HTMLSelectElement ||
+            e.target instanceof HTMLTextAreaElement
+        ) {
+            return;
+        }
         let questionList = questionListRef.current;
         if (questionList === null) {
             console.log("no question list");
