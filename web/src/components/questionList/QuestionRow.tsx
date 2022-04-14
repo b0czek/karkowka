@@ -34,6 +34,15 @@ export const QuestionRow = (props: QuestionProps) => {
         }
     );
 
+    // reset state on prop change
+    React.useEffect(() => {
+        dispatch({
+            question: props.question.question,
+            answers: props.question.answers,
+            wasEdited: false,
+        });
+    }, [props.question]);
+
     const onQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         dispatch({
             question: e.target.value,

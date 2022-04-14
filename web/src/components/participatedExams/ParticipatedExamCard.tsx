@@ -53,6 +53,13 @@ export const ParticipatedExamCard = (props: ParticipatedExamCardProps) => {
                 </Card.Text>
 
                 <Card.Text>
+                    Case sensitive: <b>{props.exam.case_sensitive ? "true" : "false"}</b>
+                </Card.Text>
+                <Card.Text>
+                    Ignore diacritics: <b>{props.exam.ignore_diacritics ? "true" : "false"}</b>
+                </Card.Text>
+
+                <Card.Text>
                     Hosted by:{" "}
                     {examHost ? (
                         <>

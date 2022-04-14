@@ -13,6 +13,12 @@ interface ExamCardDetailedProps {
 const ExamCardDetailed = (props: ExamCardDetailedProps) => {
     return (
         <>
+            <Card.Text>
+                Case sensitive: <b>{props.exam.case_sensitive ? "true" : "false"}</b>
+            </Card.Text>
+            <Card.Text>
+                Ignore diacritics: <b>{props.exam.ignore_diacritics ? "true" : "false"}</b>
+            </Card.Text>
             <ExamParticipants participants_uuids={props.exam.participants} exam_uuid={props.exam.uuid} />
             <ExamQuestions questions={props.exam.questions} question_list_uuid={props.exam.question_list} />
         </>
@@ -55,6 +61,7 @@ export const ExamCard = (props: ExamCardProps) => {
                 <Card.Text>
                     Participants count: <b>{props.exam.participants.length}</b>
                 </Card.Text>
+
                 {props.detailed ? (
                     <ExamCardDetailed exam={props.exam} />
                 ) : (

@@ -6,9 +6,9 @@ const ExamResultAnswer = (props: ExamResultAnswerProps) => {
     return (
         <ListGroup.Item className={`mt-1 border border-2 ${props.answer.is_correct ? "border-success" : "border-danger"}`}>
             <Row>
-                <Col>{props.answer.question.question}</Col>
-                <Col>{new Date(props.answer.answered_at).toLocaleString()}</Col>
-                <Col>{props.answer.answer}</Col>
+                <Col className="col-4">{props.answer.question.question}</Col>
+                <Col className="col-4">{new Date(props.answer.answered_at).toLocaleString()}</Col>
+                <Col className="col-4">{props.answer.answer}</Col>
             </Row>
         </ListGroup.Item>
     );
@@ -18,9 +18,9 @@ const ExamResultHeader = () => {
     return (
         <ListGroup.Item>
             <Row>
-                <Col>Question:</Col>
-                <Col>Answered at:</Col>
-                <Col>Answer:</Col>
+                <Col className="col-4">Question:</Col>
+                <Col className="col-4">Answered at:</Col>
+                <Col className="col-4">Answer:</Col>
             </Row>
         </ListGroup.Item>
     );
