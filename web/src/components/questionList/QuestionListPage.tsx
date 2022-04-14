@@ -106,17 +106,6 @@ export const QuestionListPage = () => {
         if (!uuid) return;
 
         updateQuestionList(uuid);
-
-        // @ts-ignore
-        window.removeEventListener("paste", pasteHandler);
-
-        // @ts-ignore
-        window.addEventListener("paste", (e) => pasteHandler(e));
-
-        return () => {
-            // @ts-ignore
-            window.removeEventListener("paste", pasteHandler);
-        };
     }, []);
 
     if (wasDeleted) {
@@ -139,7 +128,7 @@ export const QuestionListPage = () => {
 
     return (
         <Page>
-            <Col xs={11} sm={11} md={10} lg={10} xl={10}>
+            <Col xs={11} sm={11} md={10} lg={10} xl={10} onPaste={pasteHandler}>
                 {questionList ? (
                     <QuestionListCard
                         questionList={questionList}
