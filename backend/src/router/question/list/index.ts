@@ -163,7 +163,7 @@ interface QuestionListGetBody {
 }
 
 const questionListCreateSchema: Schema = {
-    name: validators.stringLength4To32,
+    name: validators.string,
 
     ...questionArraySchema,
 };

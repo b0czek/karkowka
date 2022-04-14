@@ -218,7 +218,7 @@ interface ExamUUIDBody {
 }
 
 const examPostSchema: Schema = {
-    name: validators.stringLength4To32,
+    name: validators.string,
     time_to_join: validators.intGt0,
     started_at: validators.futureDate,
     duration: validators.intGt0,
