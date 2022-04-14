@@ -9,4 +9,5 @@ RUN npm install \
 
 
 FROM nginx:stable-alpine
+RUN rm /etc/nginx/conf.d/default.conf
 COPY --from=builder /build/build /app
