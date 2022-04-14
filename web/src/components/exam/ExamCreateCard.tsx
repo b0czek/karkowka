@@ -13,6 +13,8 @@ interface ExamCreationState {
     name: string;
     selectedQuestionList: string;
     questionsCount: string;
+    case_sensitive: boolean;
+    ignore_diacritics: boolean;
     duration: string;
     timeToJoin: string;
     startedAt: string;
@@ -24,6 +26,8 @@ const initialCreationState: ExamCreationState = {
     name: "",
     questionsCount: "",
     selectedQuestionList: "",
+    case_sensitive: false,
+    ignore_diacritics: false,
     duration: "",
     timeToJoin: "",
     startedAt: "",
@@ -65,6 +69,12 @@ export const ExamCreateCard = () => {
         });
     };
 
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCreationState({
+            [e.target.name]: e.target.checked,
+        });
+    };
+
     const examCreate = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -74,6 +84,8 @@ export const ExamCreateCard = () => {
             duration: +creationState.duration * 60,
             started_at: new Date(creationState.startedAt).toISOString(),
             questions_count: +creationState.questionsCount,
+            case_sensitive: creationState.case_sensitive,
+            ignore_diacritics: creationState.ignore_diacritics,
             question_list_uuid: questionLists[+creationState.selectedQuestionList].uuid,
             participants_uuids: creationState.participants.map((participant) => participant.uuid),
         });
@@ -241,6 +253,23 @@ export const ExamCreateCard = () => {
                                     ))}
                                 </div>
                             </div>
+                        </Form.Group>
+                        <Form.Group className="d-flex flex-wrap">
+                            <Form.Check
+                                type="checkbox"
+                                label="Case sensitive"
+                                checked={creationState.case_sensitive}
+                                onChange={handleCheckboxChange}
+                                name="case_sensitive"
+                                className="pe-3"
+                            />
+                            <Form.Check
+                                type="checkbox"
+                                label="Ignore diacritics"
+                                checked={creationState.ignore_diacritics}
+                                onChange={handleCheckboxChange}
+                                name="ignore_diacritics"
+                            />
                         </Form.Group>
                     </Col>
                     <Button className="float-end mt-3" type="submit" onClick={examCreate}>

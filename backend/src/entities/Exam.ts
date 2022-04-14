@@ -35,6 +35,12 @@ export class Exam {
     @Property({ type: "number" })
     questions_count: number;
 
+    @Property({ type: "boolean" })
+    case_sensitive: boolean;
+
+    @Property({ type: "boolean" })
+    ignore_diacritics: boolean;
+
     // creator of the exam
     @ManyToOne(() => User)
     hosted_by: User;

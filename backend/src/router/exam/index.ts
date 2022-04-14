@@ -21,6 +21,8 @@ export const examObjectCreate = (exam: Exam) => {
         time_to_join: exam.time_to_join,
         duration: exam.duration,
         questions_count: exam.questions_count,
+        case_sensitive: exam.case_sensitive,
+        ignore_diacritics: exam.ignore_diacritics,
         question_list: exam.question_list.uuid,
         questions: exam.utilized_questions.getItems().map((question) => question.uuid),
         participants: exam.participants.getItems().map((participant) => participant.uuid),
@@ -114,6 +116,8 @@ export const examRouterCreate = () => {
                 time_to_join: body.time_to_join,
                 duration: body.duration,
                 questions_count: body.questions_count,
+                case_sensitive: body.case_sensitive,
+                ignore_diacritics: body.ignore_diacritics,
                 question_list: body.question_list_uuid,
                 hosted_by: req.session.user_uuid!,
                 utilized_questions: randomQuestionsUuids,
@@ -223,6 +227,10 @@ const examPostSchema: Schema = {
     started_at: validators.futureDate,
     duration: validators.intGt0,
     questions_count: validators.intGt0,
+
+    case_sensitive: validators.boolean,
+    ignore_diacritics: validators.boolean,
+
     question_list_uuid: validators.uuid,
 
     participants_uuids: {
@@ -244,6 +252,8 @@ interface ExamPostBody {
     time_to_join: number;
     duration: number;
     questions_count: number;
+    case_sensitive: boolean;
+    ignore_diacritics: boolean;
     question_list_uuid: string;
     participants_uuids: string[];
 }

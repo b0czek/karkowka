@@ -21,6 +21,8 @@ export interface ExamObject {
     time_to_join: number;
     duration: number;
     questions_count: number;
+    case_sensitive: boolean;
+    ignore_diacritics: boolean;
     question_list: string;
     questions: string[];
     participants: string[];
@@ -32,6 +34,8 @@ interface ExamCreateBody {
     started_at: string;
     duration: number;
     questions_count: number;
+    case_sensitive: boolean;
+    ignore_diacritics: boolean;
     question_list_uuid: string;
     participants_uuids: string[];
 }

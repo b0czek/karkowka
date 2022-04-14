@@ -18,6 +18,8 @@ export const userParticipatedExamObjectCreate = (exam: Exam, exam_participations
         time_to_join: exam.time_to_join,
         duration: exam.duration,
         questions_count: exam.questions_count,
+        case_sensitive: exam.case_sensitive,
+        ignore_diacritics: exam.ignore_diacritics,
         hosted_by: exam.hosted_by.uuid,
         joined: participation !== undefined,
         participation_uuid: participation?.uuid ?? null,

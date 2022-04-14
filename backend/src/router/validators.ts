@@ -93,6 +93,15 @@ const int: ParamSchema = {
     },
 };
 
+const boolean: ParamSchema = {
+    isBoolean: {
+        bail: true,
+        options: {
+            strict: true,
+        },
+    },
+};
+
 const existsInDb = <T extends AnyEntity<T>>(
     entityName: EntityName<T>,
     field: Exclude<keyof ObjectQuery<T>, keyof OperatorMap<T>>,
@@ -133,6 +142,7 @@ export default {
     futureDate,
     int,
     intGt0,
+    boolean,
     existsInDb,
 };
 

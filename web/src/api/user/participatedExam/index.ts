@@ -18,6 +18,8 @@ export interface ParticipatedExamObject {
     time_to_join: number;
     duration: number;
     questions_count: number;
+    case_sensitive: boolean;
+    ignore_diacritics: boolean;
     hosted_by: string;
     joined: boolean;
     participation_uuid: string | null;

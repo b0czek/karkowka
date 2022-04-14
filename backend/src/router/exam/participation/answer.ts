@@ -8,6 +8,7 @@ import { AppRouter } from "../..";
 import { ExpressSession } from "../../expressSession";
 import validators, { rejectIfBadRequest } from "../../validators";
 import { questionObjectCreate } from "./questions";
+import lodash from "lodash";
 
 export const examAnswerObjectCreate = (answer: ExamAnswer) => {
     return {
@@ -19,8 +20,18 @@ export const examAnswerObjectCreate = (answer: ExamAnswer) => {
     };
 };
 
-const isAnswerCorrect = (answer: string, answers: string[]) => {
-    return answers.includes(answer);
+const isAnswerCorrect = (answer: string, answers: string[], options: ExamCheckAnswerOptions) => {
+    let answersArr = [...answers];
+    if (!options.case_sensitive) {
+        answersArr = answersArr.map((answer) => answer.toLowerCase());
+        answer = answer.toLowerCase();
+    }
+    if (options.ignore_diacritics) {
+        answersArr = answersArr.map((answer) => lodash.deburr(answer));
+        answer = lodash.deburr(answer);
+    }
+
+    return answersArr.includes(answer);
 };
 
 const isParticipationOpen = (joined_at: Date, duration: number) => {
@@ -99,7 +110,7 @@ export const examAnswerRouterCreate = () => {
                         uuid: body.participation_uuid,
                     },
                     {
-                        fields: ["joined_at", "exam.duration"],
+                        fields: ["joined_at", "exam"],
                     }
                 );
                 if (!p) {
@@ -141,7 +152,10 @@ export const examAnswerRouterCreate = () => {
                 return AppRouter.internalServerError(res);
             }
 
-            let answerCorrect = isAnswerCorrect(body.answer, question.answers);
+            let answerCorrect = isAnswerCorrect(body.answer, question.answers, {
+                case_sensitive: participation.exam.case_sensitive,
+                ignore_diacritics: participation.exam.ignore_diacritics,
+            });
 
             let answer = Database.orm.em.create(ExamAnswer, {
                 anwser: body.answer,
@@ -205,4 +219,9 @@ interface ExamAnswerPostSchema {
     question_uuid: string;
     participation_uuid: string;
     answer: string;
+}
+
+interface ExamCheckAnswerOptions {
+    case_sensitive: boolean;
+    ignore_diacritics: boolean;
 }
