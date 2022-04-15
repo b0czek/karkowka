@@ -25,7 +25,6 @@ export const examParticipationObjectCreate = (examParticipation: ExamParticipati
         joined_at: examParticipation.joined_at,
         finished_at: examParticipationFinishDate(examParticipation),
         answers: examParticipation.answers.getItems().map((answer) => examAnswerObjectCreate(answer)),
-        correct_answers_count: examParticipation.answers.getItems().filter((answer) => answer.is_correct).length,
         exam: examParticipation.exam.uuid,
     };
 };

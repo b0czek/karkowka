@@ -27,7 +27,7 @@ export const ParticipatedExamCardResult = (props: ParticipatedExamCardResultProp
             <Card.Text>
                 Correct answers:{" "}
                 <b>
-                    {props.participation.correct_answers_count} / {props.exam.questions_count}
+                    {props.participation.answers.filter((answer) => answer.is_correct).length} / {props.exam.questions_count}
                 </b>
             </Card.Text>
             <ExamResultAnswers answers={props.participation.answers} />

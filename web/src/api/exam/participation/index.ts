@@ -20,7 +20,6 @@ export interface ExamParticipationObject {
     joined_at: string;
     finished_at: string | null;
     answers: AnswerObject[];
-    correct_answers_count: number;
     exam: string;
 }
 

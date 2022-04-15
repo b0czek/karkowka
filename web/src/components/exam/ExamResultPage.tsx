@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { Exam, ExamObject } from "../../api/exam";
 import { ExamParticipationObject } from "../../api/exam/participation";
 import { ExamResult } from "../../api/exam/result";
+import { ExamResultAnswerApprove } from "../../api/exam/result/answer/approve";
 import { Page } from "../Page";
 import { ExamResultCard } from "./ExamResultCard";
 
@@ -35,10 +36,36 @@ export const ExamResultPage = () => {
         });
     }, []);
 
+    const toggleAnswerApproval = async (answerIdx: number) => {
+        if (!examResult) {
+            return;
+        }
+        let answer = examResult.answers[answerIdx];
+        let isCorrect = !answer.is_correct;
+        let res = await ExamResultAnswerApprove.handleRequest(ExamResultAnswerApprove.post, {
+            participation_uuid: examResult.uuid,
+            answer_uuid: answer.uuid,
+            is_correct: isCorrect,
+        });
+
+        if (typeof res === "string") {
+            return;
+        }
+
+        setExamResult({
+            ...examResult,
+            answers: examResult.answers.map((answer, idx) => (idx === answerIdx ? { ...answer, is_correct: isCorrect } : answer)),
+        });
+    };
+
     return (
         <Page>
             <Col xs={11} sm={11} md={10} lg={10} xl={10}>
-                {examResult && exam ? <ExamResultCard result={examResult} exam={exam} /> : "Loading..."}
+                {examResult && exam ? (
+                    <ExamResultCard result={examResult} exam={exam} toggleApproval={toggleAnswerApproval} />
+                ) : (
+                    "Loading..."
+                )}
             </Col>
         </Page>
     );

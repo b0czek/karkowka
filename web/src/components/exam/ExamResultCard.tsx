@@ -23,10 +23,10 @@ export const ExamResultCard = (props: ExamResultCardProps) => {
                 <Card.Text>
                     Correct answers:{" "}
                     <b>
-                        {props.result.correct_answers_count} / {props.exam.questions_count}
+                        {props.result.answers.filter((answer) => answer.is_correct).length} / {props.exam.questions_count}
                     </b>
                 </Card.Text>
-                <ExamResultAnswers answers={props.result.answers} />
+                <ExamResultAnswers answers={props.result.answers} toggleApproval={props.toggleApproval} />
             </Card.Body>
         </Card>
     );
@@ -35,4 +35,5 @@ export const ExamResultCard = (props: ExamResultCardProps) => {
 export interface ExamResultCardProps {
     result: ExamParticipationObject;
     exam: ExamObject;
+    toggleApproval: (idx: number) => void;
 }

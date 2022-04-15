@@ -9,11 +9,13 @@ import { Database } from "../../../database";
 import { AppRouter } from "../..";
 import { examParticipationObjectCreate } from "../participation";
 import { examResultStateRouterCreate } from "./state";
+import { answerRouterCreate } from "./answer";
 
 export const examResultRouterCreate = () => {
     const router = express.Router();
 
     router.use("/state", examResultStateRouterCreate());
+    router.use("/answer", answerRouterCreate());
 
     router.get(
         "/",
@@ -35,6 +37,11 @@ export const examResultRouterCreate = () => {
                     },
                     {
                         populate: ["answers", "answers.question", "exam"],
+                        orderBy: {
+                            answers: {
+                                anwsered_at: "asc",
+                            },
+                        },
                     }
                 );
                 if (!part) {
